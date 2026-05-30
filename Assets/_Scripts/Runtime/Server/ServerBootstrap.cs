@@ -5,7 +5,6 @@ public class ServerBootstrap
 {
     private Socket _socket;
     private List<Session> _clients;
-
     private SocketAsyncEventArgs _acceptArgs;
 
     public void Initialize()
@@ -15,10 +14,17 @@ public class ServerBootstrap
         ProtocolType protocol = ProtocolType.Tcp;
         _socket = new Socket(addressFamily, socketType, protocol);
 
-        _socket.Listen(10);
-
         _acceptArgs = new SocketAsyncEventArgs();
         _acceptArgs.Completed += HandleAccept;
+    }
+
+    public void Listen()
+    {
+        _socket.Listen(10);
+    }
+
+    public void Accept()
+    {
         bool pending = _socket.AcceptAsync(_acceptArgs);
         if (!pending)
             HandleAccept(null, _acceptArgs);
