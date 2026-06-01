@@ -1,0 +1,18 @@
+{
+    "name": "Runtime.Server.Core",
+    "rootNamespace": "Runtime.Server.Core",
+    "references": [
+        "GUID:c7f0e014a3cab944ba045e8fcf36cab7",
+        "GUID:e2ea857a5592ea94e982da34a2c5b69c",
+        "GUID:70abd8ce9b1064544b5ad2fd40f83e14"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
