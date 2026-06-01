@@ -1,4 +1,4 @@
 @echo off
-set OUTPUT_PATH=.
-flatc.exe --csharp -o %OUTPUT_PATH% Monster.fbs
+set OUTPUT_PATH=C:\GitHub\260530_Trio\Assets\_Scripts\Runtime\Shared\Packet
+flatc.exe --csharp -o %OUTPUT_PATH% RoomPacket.fbs
 pause

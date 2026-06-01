@@ -1,0 +1,10 @@
+namespace GameRoomPacket;
+
+table RoomPacket{ }
+
+table C2S_EnterGameRoomPacket {
+  playerId:short;
+  playerName:string;
+}
+
+root_type RoomPacket;
