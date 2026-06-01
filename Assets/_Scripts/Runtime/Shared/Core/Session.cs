@@ -1,4 +1,5 @@
 using KSY.Utility;
+using Runtime.Shared.Packet;
 using System;
 using System.Net.Sockets;
 
@@ -6,14 +7,17 @@ public class Session
 {
     private Socket _connectedSocket;
     private SocketAsyncEventArgs _receiveArgs;
+    private SocketAsyncEventArgs _sendArgs;
     private ReceiveBuffer _receiveBuffer;
 
     public Session(Socket connectedSocket)
     {
-        this._connectedSocket = connectedSocket;
+        _connectedSocket = connectedSocket;
 
         _receiveArgs = new SocketAsyncEventArgs();
-        _receiveArgs.Completed += HandleReceive;
+        _receiveArgs.Completed += HandleReceived;
+        _sendArgs = new SocketAsyncEventArgs();
+        _receiveArgs.Completed += HandleSent;
 
         _receiveBuffer = new ReceiveBuffer(4096);
     }
@@ -22,17 +26,18 @@ public class Session
     {
         bool pending = _connectedSocket.ReceiveAsync(_receiveArgs);
         if (!pending)
-            HandleReceive(null, _receiveArgs);
+            HandleReceived(null, _receiveArgs);
     }
 
-    public void Send()
+    public void Send(IPacket packet)
     {
-
+        _sendArgs.SetBuffer(packet.GetBytes());
+        _connectedSocket.SendAsync(_sendArgs);
     }
 
-    private void HandleReceive(object sender, SocketAsyncEventArgs args)
+    private void HandleReceived(object sender, SocketAsyncEventArgs args)
     {
-        if(args.SocketError == SocketError.Success
+        if (args.SocketError == SocketError.Success
             && args.BytesTransferred > 0)
         {
             int bytesTransferred = args.BytesTransferred;
@@ -40,6 +45,8 @@ public class Session
             ArraySegment<byte> segment = _receiveBuffer.WriteSegment();
             Array.Copy(buffer, 0, segment.Array, segment.Offset, bytesTransferred);
             _receiveBuffer.OnWrite(bytesTransferred);
+
+            CustomLog.LogSuccess("HandleReceived");
         }
         else
         {
@@ -47,4 +54,16 @@ public class Session
         }
     }
 
+    private void HandleSent(object sender, SocketAsyncEventArgs args)
+    {
+        if (args.SocketError == SocketError.Success
+            && args.BytesTransferred > 0)
+        {
+            CustomLog.LogSuccess("HandleSent");
+        }
+        else
+        {
+            CustomLog.LogError(args.SocketError.ToString());
+        }
+    }
 }

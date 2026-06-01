@@ -27,6 +27,11 @@ namespace KSY.Utility
             UnityEngine.Debug.LogError($"[ERROR] {message}");
         }
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        public static void LogSuccess(object message)
+        {
+            UnityEngine.Debug.Log($"<color=green>[Success] {message}</color>");
+        }
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         public static void Assert(bool condition,object message)
         {
             UnityEngine.Debug.Assert(condition, message);
