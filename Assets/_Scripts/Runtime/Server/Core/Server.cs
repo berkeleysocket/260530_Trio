@@ -9,7 +9,7 @@ namespace Runtime.Server.Core
 {
     public class Server
     {
-        private Socket _socket;
+        private Socket _listenSocket;
         private List<Session> _clients;
         private SocketAsyncEventArgs _acceptArgs;
 
@@ -21,7 +21,7 @@ namespace Runtime.Server.Core
             AddressFamily addressFamily = AddressFamily.InterNetwork;
             SocketType socketType = SocketType.Stream;
             ProtocolType protocol = ProtocolType.Tcp;
-            _socket = new Socket(addressFamily, socketType, protocol);
+            _listenSocket = new Socket(addressFamily, socketType, protocol);
 
             _acceptArgs = new SocketAsyncEventArgs();
             _acceptArgs.Completed += HandleAccept;
@@ -31,7 +31,7 @@ namespace Runtime.Server.Core
         {
             IPAddress ipAddress = IPAddress.Parse(address);
             IPEndPoint endPoint = new IPEndPoint(ipAddress, port);
-            _socket.Bind(endPoint);
+            _listenSocket.Bind(endPoint);
             IsBound = true;
         }
 
@@ -43,7 +43,7 @@ namespace Runtime.Server.Core
                 return;
             }
 
-            _socket.Listen(10);
+            _listenSocket.Listen(10);
             IsListening = true;
         }
 
@@ -54,7 +54,7 @@ namespace Runtime.Server.Core
                 CustomLog.LogError("server is not listening");
                 return;
             }
-            bool pending = _socket.AcceptAsync(_acceptArgs);
+            bool pending = _listenSocket.AcceptAsync(_acceptArgs);
             if (!pending)
                 HandleAccept(null, _acceptArgs);
         }
@@ -69,7 +69,7 @@ namespace Runtime.Server.Core
 
         private void HandleAccept(object sender, SocketAsyncEventArgs args)
         {
-            _socket.AcceptAsync(_acceptArgs);
+            Accept();
             Session client = new Session(args.AcceptSocket);
             _clients.Add(client);
 
