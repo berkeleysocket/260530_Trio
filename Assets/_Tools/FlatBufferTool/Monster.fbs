@@ -1,0 +1,12 @@
+namespace MyGame.Protocol;
+
+enum Color : byte { Red = 0, Green, Blue }
+
+table Monster {
+  hp:int = 100;
+  mana:short = 150;
+  name:string;
+  color:Color = Blue;
+}
+
+root_type Monster;
