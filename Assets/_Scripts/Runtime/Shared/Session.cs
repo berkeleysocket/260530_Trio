@@ -22,6 +22,6 @@ public class Session
 
     private void HandleReceive(object sender, SocketAsyncEventArgs args)
     {
-
+        args.
     }
 }
