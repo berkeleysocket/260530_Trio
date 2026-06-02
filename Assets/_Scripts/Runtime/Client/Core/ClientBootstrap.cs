@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Runtime.Client.Core
+namespace Runtime.Clients.Core
 {
     public class ClientBootstrap : MonoBehaviour
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Runtime.Server.Core
+namespace Runtime.Servers.Core
 {
     public class ServerBootstrap : MonoBehaviour
     {

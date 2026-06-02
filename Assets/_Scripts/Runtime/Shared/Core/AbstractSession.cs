@@ -1,21 +1,18 @@
 using DebugingUtility;
-using Runtime.Server.Core;
 using Runtime.Shared.Packet;
 using System;
 using System.Net.Sockets;
-using UnityEditor.AdaptivePerformance.Editor;
 
 namespace Runtime.Shared.Core
 {
-    public class Session
+    public abstract class AbstractSession
     {
         private Socket _connectedSocket;
         private SocketAsyncEventArgs _receiveArgs;
         private SocketAsyncEventArgs _sendArgs;
-        private SocketAsyncEventArgs _connectedArgs;
         private ReceiveBuffer _receiveBuffer;
 
-        public Session(Socket connectedSocket)
+        public AbstractSession(Socket connectedSocket)
         {
             _connectedSocket = connectedSocket;
 
@@ -23,29 +20,8 @@ namespace Runtime.Shared.Core
             _receiveArgs.Completed += HandleReceived;
             _sendArgs = new SocketAsyncEventArgs();
             _receiveArgs.Completed += HandleSent;
-            _connectedArgs = new SocketAsyncEventArgs();
-            _connectedArgs.Completed += HandleConnected;
 
             _receiveBuffer = new ReceiveBuffer(4096);
-        }
-
-        public void Connect()
-        {
-            bool pending = _connectedSocket.ConnectAsync(_connectedArgs);
-            if (!pending)
-                HandleConnected(null, _connectedArgs);
-        }
-
-        private void HandleConnected(object sender, SocketAsyncEventArgs args)
-        {
-            if (args.SocketError == SocketError.Success)
-            {
-                CustomLog.LogSuccess("HandleConnected");
-            }
-            else
-            {
-                CustomLog.LogError(args.SocketError.ToString());
-            }
         }
 
         public void Receive()
