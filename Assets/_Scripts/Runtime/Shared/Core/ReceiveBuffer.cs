@@ -31,4 +31,3 @@ namespace Runtime.Shared.Core
         }
     }
 }
-

@@ -62,11 +62,20 @@ namespace Runtime.Servers.Core
 
         private void HandleAccept(object sender, SocketAsyncEventArgs args)
         {
-            Accept();
-            ClientSession client = new ClientSession(args.AcceptSocket);
-            _clients.Add(client);
+            if(args.SocketError == SocketError.Success)
+            {
+                CustomLog.LogSuccess("HandleAccept");
+                ClientSession client = new ClientSession(args.AcceptSocket);
+                _clients.Add(client);
+                client.Open();
+                Accept();
+            }
+            else
+            {
+                CustomLog.LogError(args.SocketError.ToString());
+            }
 
-            client.Receive();
+
         }
     }
 }

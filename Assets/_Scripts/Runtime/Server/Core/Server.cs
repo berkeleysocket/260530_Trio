@@ -12,9 +12,9 @@ namespace Runtime.Servers.Core
             _listener.Initialize();
         }
 
-        public void Open()
+        public void Open(NetworkConnectDataSO data)
         {
-            _listener.Bind("127.0.0.1", 8976);
+            _listener.Bind(data.IpAddress, data.Port);
             _listener.Listen();
             _listener.Accept();
         }

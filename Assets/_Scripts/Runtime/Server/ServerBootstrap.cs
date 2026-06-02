@@ -4,6 +4,7 @@ namespace Runtime.Servers.Core
 {
     public class ServerBootstrap : MonoBehaviour
     {
+        [SerializeField] private NetworkConnectDataSO data;
         private Server _server;
 
         private void Awake()
@@ -15,7 +16,7 @@ namespace Runtime.Servers.Core
         [ContextMenu("ServerStart")]
         public void ServerStart()
         {
-            _server.Open();
+            _server.Open(data);
         }
     }
 }
