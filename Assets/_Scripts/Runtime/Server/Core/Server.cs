@@ -5,11 +5,26 @@ namespace Runtime.Servers.Core
     public class Server
     {
         private Listener _listener;
+
+        public void Initialize()
+        {
+            _listener = new Listener();
+            _listener.Initialize();
+        }
+
+        public void Open()
+        {
+            _listener.Bind("127.0.0.1", 8976);
+            _listener.Listen();
+            _listener.Accept();
+        }
+
         public void BroadcastAll(IPacket packet)
         {
-            for (int i = _clients.Count - 1; i >= 0; i--)
+            var clients = _listener.GetClients();
+            for (int i = clients.Count - 1; i >= 0; i--)
             {
-                _clients[i].Send(packet);
+                clients[i].Send(packet);
             }
         }
     }

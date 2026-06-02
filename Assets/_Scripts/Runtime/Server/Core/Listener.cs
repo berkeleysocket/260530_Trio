@@ -26,6 +26,8 @@ namespace Runtime.Servers.Core
             _acceptArgs.Completed += HandleAccept;
         }
 
+        public List<ClientSession> GetClients() => new List<ClientSession>(_clients);
+
         public void Bind(string address, int port)
         {
             IPAddress ipAddress = IPAddress.Parse(address);
@@ -68,4 +70,3 @@ namespace Runtime.Servers.Core
         }
     }
 }
-

@@ -15,9 +15,7 @@ namespace Runtime.Servers.Core
         [ContextMenu("ServerStart")]
         public void ServerStart()
         {
-            _server.Bind("127.0.0.1", 8972);
-            _server.Listen();
-            _server.Accept();
+            _server.Open();
         }
     }
 }

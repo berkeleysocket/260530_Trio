@@ -10,5 +10,3 @@ namespace Runtime.Clients.Core
         }
     }
 }
-
-
