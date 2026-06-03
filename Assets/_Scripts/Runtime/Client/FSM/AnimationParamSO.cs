@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Runtime.Clients.FSM
 {
     [CreateAssetMenu(fileName = "Animator param", menuName = "Lib/Animator param", order = 10)]
-    public class AnimParamSO : ScriptableObject
+    public class AnimationParamSO : ScriptableObject
     {
         [field: SerializeField] public string ParamName { get; private set; }
         [field: SerializeField] public int ParamHash { get; private set; }
