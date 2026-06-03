@@ -2,9 +2,7 @@ using Runtime.Clients.ModuleSystem;
 
 namespace Runtime.Clients.Agents
 {
-    public class Agent : ModuleOwner
+    public abstract class Agent : ModuleOwner
     {
     }
 }
-
-

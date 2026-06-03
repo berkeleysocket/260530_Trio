@@ -14,6 +14,12 @@ namespace Runtime.Clients.ModuleSystem
         private void Awake()
         {
             Initialize();
+            OnAwake();
+        }
+
+        protected virtual void OnAwake()
+        {
+
         }
 
         public void Initialize()
@@ -25,7 +31,7 @@ namespace Runtime.Clients.ModuleSystem
                 module.Initialize(this);
         }
 
-        protected T GetModule<T>() where T : class, IModule
+        public T GetModule<T>() where T : class, IModule
         {
             if(_modules.TryGetValue(typeof(T), out IModule module))
             {

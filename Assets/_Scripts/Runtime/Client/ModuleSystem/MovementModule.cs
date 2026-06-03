@@ -24,7 +24,7 @@ namespace Runtime.Clients.Agents
         private float _groundDistance = 0.2f;
         private float _horizontalInput;
 
-        public void Initialize(ModuleOwner agent)
+        public void Initialize(ModuleOwner owner)
         {
             _controller = GetComponent<CharacterController>();
         }
@@ -51,7 +51,8 @@ namespace Runtime.Clients.Agents
 
         public void Jump()
         {
-            _velocity.y = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
+            if(_isGrounded)
+                _velocity.y = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
         }
 
         private void CalculateVelocity()
