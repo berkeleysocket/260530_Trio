@@ -1,8 +1,6 @@
-using Runtime.Clients.ModuleSystem;
-
 using UnityEngine;
 
-namespace Runtime.Clients.Agents
+namespace Runtime.ModuleSystem
 {
     [RequireComponent(typeof(CharacterController))]
     public class MovementModule : MonoBehaviour, IModule

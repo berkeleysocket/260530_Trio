@@ -1,6 +1,4 @@
-using Runtime.Clients.ModuleSystem;
-
-namespace Runtime.Clients.Agents
+namespace Runtime.ModuleSystem
 {
     public interface IModule
     {

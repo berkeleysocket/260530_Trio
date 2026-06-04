@@ -1,7 +1,6 @@
-using Runtime.Clients.Agents;
 using UnityEngine;
 
-namespace Runtime.Clients.ModuleSystem
+namespace Runtime.ModuleSystem
 {
     [RequireComponent(typeof(Animator))]
     public class RenderModule : MonoBehaviour, IModule

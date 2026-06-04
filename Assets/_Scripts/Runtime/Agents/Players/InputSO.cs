@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Runtime.Clients.Players
+namespace Runtime.Agents
 {
     [CreateAssetMenu(fileName = "InputSO", menuName = "KSY/SO/InputSO")]
     public class InputSO : ScriptableObject, @InputActions.IPlayerActions

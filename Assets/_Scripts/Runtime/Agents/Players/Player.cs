@@ -1,6 +1,4 @@
-using Runtime.Clients.Agents;
-
-namespace Runtime.Clients.Players
+namespace Runtime.Agents
 {
     public class Player : Agent
     {

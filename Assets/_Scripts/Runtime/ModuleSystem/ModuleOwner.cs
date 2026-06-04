@@ -1,11 +1,9 @@
-using Runtime.Clients.Agents;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Tracing;
 using System.Linq;
 using UnityEngine;
 
-namespace Runtime.Clients.ModuleSystem
+namespace Runtime.ModuleSystem
 {
     public abstract class ModuleOwner : MonoBehaviour
     {

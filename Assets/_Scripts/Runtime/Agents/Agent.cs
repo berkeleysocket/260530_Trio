@@ -1,6 +1,6 @@
-using Runtime.Clients.ModuleSystem;
+using Runtime.ModuleSystem;
 
-namespace Runtime.Clients.Agents
+namespace Runtime.Agents
 {
     public abstract class Agent : ModuleOwner
     {

@@ -1,8 +1,7 @@
 using GameRoomPacket;
-using Runtime.Shared.Core;
 using UnityEngine;
 
-namespace Runtime.Clients.Players
+namespace Runtime.Agents
 {
     public class InputReader : MonoBehaviour
     {
@@ -14,7 +13,7 @@ namespace Runtime.Clients.Players
             {
                 C2S_MoveInputPacket packet = new C2S_MoveInputPacket();
                 //C2S_MoveInputPacket.StartC2S_MoveInputPacket();
-                NetworkManager.Instance.Send(packet);
+                //NetworkManager.Instance.Send(packet);
             };
         }
     }
