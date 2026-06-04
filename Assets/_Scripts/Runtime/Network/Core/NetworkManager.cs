@@ -7,8 +7,6 @@ namespace Runtime.Shared.Core
         public static NetworkManager Instance => _instance;
         private static NetworkManager _instance;
 
-        public NetworkRole Role { get; private set; }
-
         public void Awake()
         {
             if (_instance == null)
@@ -21,8 +19,6 @@ namespace Runtime.Shared.Core
                 Destroy(gameObject);
                 return;
             }
-
-            Role = NetworkRole.None;
         }
 
         private void Update()
@@ -35,6 +31,10 @@ namespace Runtime.Shared.Core
             {
                 //StartHost();
             }
+        }
+
+        private void Initialize() 
+        {
         }
     }
 }
