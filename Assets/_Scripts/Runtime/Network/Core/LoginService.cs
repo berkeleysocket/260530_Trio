@@ -7,22 +7,50 @@ namespace Runtime.Networks
 {
     public enum SignUpError
     {
-        Success = 200,
+        Success = 201,
+
+        //디바이스 정보가 null일 경우
+        DeviceInfoIsNull = 400,
+
+        //프로젝트가 점검중일 경우
+        ProjectIsMaintenance = 401,
+        
+        //차단되었을 경우
+        BlockedDevice = 403,
+
+        //아이디가 중복되었을 경우
+        Duplicate = 409
     }
 
     public enum LoginError
     {
         Success = 200,
+
+        //디바이스 정보가 null일 경우
+        DeviceInfoIsNull = 400,
+
+        //아이디/비밀번호가 틀렸을 경우 (없을 경우)
+        UnDefined = 401,
+
+        //차단되었을 경우
+        BlockedDevice = 403,
+
+        //탈퇴중일 경우
+        WithdrawalInProcess = 410
     }
 
     public enum NicknameError
     {
         Success = 204,
+
+        //닉네임의 길이가 20자를 넘어가거나 0이하일 경우
         InvalidLength = 400,
+
+        //닉네임이 중복되었을 경우
         Duplicate = 409
     }
 
-    public class LoginService : MonoBehaviour
+    public class LoginService
     {
         private event Action SignUpCompleted;
         private event Action<int> SignUpFailed;
@@ -49,7 +77,7 @@ namespace Runtime.Networks
 
         private void HandleSignup(BackendReturnObject bro)
         {
-            if (bro.IsSuccess() && bro.StatusCode == 200)
+            if (bro.IsSuccess() && bro.StatusCode == (int)SignUpError.Success)
             {
                 CustomLog.LogSuccess("회원 가입에 성공했습니다.");
                 SignUpCompleted?.Invoke();
@@ -76,7 +104,7 @@ namespace Runtime.Networks
 
         private void HandleCustomLogin(BackendReturnObject bro)
         {
-            if(bro.IsSuccess() && bro.StatusCode == 200)
+            if(bro.IsSuccess() && bro.StatusCode == (int)LoginError.Success)
             {
                 CustomLog.LogSuccess("로그인에 성공했습니다.");
                 LoginCompleted?.Invoke();
@@ -131,7 +159,7 @@ namespace Runtime.Networks
 
         private void HandleUpdateNickname(BackendReturnObject bro)
         {
-            if(bro.IsSuccess() && bro.StatusCode == 200)
+            if(bro.IsSuccess() && bro.StatusCode == (int)NicknameError.Success)
             {
                 CustomLog.LogSuccess("닉네임 변경에 성공했습니다.");
                 UpdateNicknameCompleted?.Invoke();
