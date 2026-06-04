@@ -1,29 +1,33 @@
-using DebugingUtility;
-using Runtime.Shared.Packet;
+using Utility.Debug;
 using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 
 namespace Runtime.Shared.Core
 {
-    public abstract class AbstractSession
+    public class Session
     {
+        public bool IsOpened { get; private set; }
+
         private Socket _connectedSocket;
         private SocketAsyncEventArgs _receiveArgs;
         private SocketAsyncEventArgs _sendArgs;
         private ReceiveBuffer _receiveBuffer;
+        private SendQueue _sendQueue;
 
-        public bool IsOpened { get; private set; }
-
-        public AbstractSession(Socket connectedSocket)
+        public Session(Socket connectedSocket)
         {
             _connectedSocket = connectedSocket;
+
+            _receiveBuffer = new ReceiveBuffer();
+            _receiveBuffer.Initialize(4056);
+            _sendQueue = new SendQueue();
+            _sendQueue.Initialize();
 
             _receiveArgs = new SocketAsyncEventArgs();
             _receiveArgs.Completed += HandleReceived;
             _sendArgs = new SocketAsyncEventArgs();
-            _receiveArgs.Completed += HandleSent;
-
-            _receiveBuffer = new ReceiveBuffer(4096);
+            _sendArgs.Completed += HandleSent;
         }
 
         public void Open()
@@ -46,11 +50,14 @@ namespace Runtime.Shared.Core
             _receiveBuffer = null;
         }
 
-        public void Send(IPacket packet)
+        public void Send(Packet packet)
         {
             if(IsOpened)
             {
-                _sendArgs.SetBuffer(packet.GetBytes());
+                List<ArraySegment<byte>> bufferList = null;
+                _sendQueue.Enqueue(packet);
+                _sendQueue.TryFlush(out bufferList);
+                _sendArgs.BufferList = bufferList;
                 _connectedSocket.SendAsync(_sendArgs);
             }
             else
@@ -76,6 +83,9 @@ namespace Runtime.Shared.Core
         {
             if(IsOpened)
             {
+                _receiveBuffer.Clean();
+                _receiveArgs.SetBuffer(_receiveBuffer.WriteSegment());
+
                 bool pending = _connectedSocket.ReceiveAsync(_receiveArgs);
                 if (!pending)
                     HandleReceived(null, _receiveArgs);

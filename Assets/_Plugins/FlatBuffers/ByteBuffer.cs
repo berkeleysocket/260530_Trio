@@ -92,10 +92,10 @@ namespace Google.FlatBuffers
         {
             if ((Length & 0xC0000000) != 0)
                 throw new Exception(
-                    "ByteBuffer: cannot grow buffer beyond 2 gigabytes.");
+                    "ByteBuffer: cannot grow flatBuffer beyond 2 gigabytes.");
 
             if (newSize < Length)
-                throw new Exception("ByteBuffer: cannot truncate buffer.");
+                throw new Exception("ByteBuffer: cannot truncate flatBuffer.");
 
             byte[] newBuffer = new byte[newSize];
             System.Buffer.BlockCopy(_buffer, 0, newBuffer, newSize - Length, Length);
@@ -964,7 +964,7 @@ namespace Google.FlatBuffers
             if (!IsSupportedType<T>())
             {
                 throw new ArgumentException("Cannot put an array of type "
-                    + typeof(T) + " into this buffer");
+                    + typeof(T) + " into this flatBuffer");
             }
 
             if (BitConverter.IsLittleEndian)
@@ -1022,7 +1022,7 @@ namespace Google.FlatBuffers
             if (!IsSupportedType<T>())
             {
                 throw new ArgumentException("Cannot put an array of type "
-                    + typeof(T) + " into this buffer");
+                    + typeof(T) + " into this flatBuffer");
             }
 
             if (BitConverter.IsLittleEndian)

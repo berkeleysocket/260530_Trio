@@ -1,13 +1,18 @@
-using DebugingUtility;
 using Runtime.Clients.ModuleSystem;
-using Runtime.Shared.Packet;
+
 using UnityEngine;
 
 namespace Runtime.Clients.Agents
 {
     [RequireComponent(typeof(CharacterController))]
-    public class MovementModule : NetworkObject, IModule
+    public class MovementModule : MonoBehaviour, IModule
     {
+        //FSM 만들기 전 임시 코드
+        [SerializeField] RenderModule render;
+        private bool _isPlayingIdle = false;
+        private bool _isPlayingRun = false;
+        private bool _isPlayingJump = false;
+
         [SerializeField] private Transform groundCheck;
         [SerializeField] private LayerMask groundMask;
 
@@ -21,7 +26,6 @@ namespace Runtime.Clients.Agents
         private float _moveSpeed = 7f;
         private float _jumpHeight = 2.5f;
         private float _gravity = -25f; 
-        private float _groundDistance = 0.2f;
         private float _horizontalInput;
 
         public void Initialize(ModuleOwner owner)
@@ -31,6 +35,38 @@ namespace Runtime.Clients.Agents
 
         void Update()
         {
+            //FSM 만들기 전 임시 코드
+            if (_horizontalInput == 0f && _isGrounded && !_isPlayingIdle)
+            {
+                _isPlayingIdle = true;
+
+                int hash = Animator.StringToHash("IDLE");
+                render.PlayClip(hash, 0, 0);
+
+                _isPlayingRun = false;
+                _isPlayingJump = false;
+            }
+            else if (_horizontalInput != 0f && _isGrounded && !_isPlayingRun)
+            {
+                _isPlayingRun = true;
+
+                int hash = Animator.StringToHash("RUN");
+                render.PlayClip(hash, 0, 0);
+
+                _isPlayingIdle = false;
+                _isPlayingJump = false;
+            }
+            else if (!_isGrounded && !_isPlayingJump)
+            {
+                _isPlayingJump = true;
+
+                int hash = Animator.StringToHash("JUMP");
+                render.PlayClip(hash, 0, 0);
+
+                _isPlayingIdle = false;
+                _isPlayingRun = false;
+            }
+
             HandleGravity();
             HandleRotation();
             CalculateVelocity();
@@ -39,20 +75,17 @@ namespace Runtime.Clients.Agents
             _controller.Move(_velocity * Time.deltaTime);
         }
 
-        protected override void Sync(IPacket packet)
+        public void SetHorizontalInput(float input)
         {
-            CustomLog.Log("나중에 동기화 시켜야 할 부분");
-        }
-
-        public void SetHorizontalInput(float direction)
-        {
-            _horizontalInput = direction;
+            _horizontalInput = input;
         }
 
         public void Jump()
         {
-            if(_isGrounded)
+            if (_isGrounded)
+            {
                 _velocity.y = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
+            }
         }
 
         private void CalculateVelocity()

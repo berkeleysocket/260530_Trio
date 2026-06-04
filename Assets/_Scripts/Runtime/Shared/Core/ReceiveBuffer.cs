@@ -8,7 +8,7 @@ namespace Runtime.Shared.Core
         private int _readCursor = 0;
         private int _writeCursor = 0;
 
-        public ReceiveBuffer(int capacity)
+        public void Initialize(int capacity)
         {
             _buffer = new byte[capacity];
         }

@@ -2,9 +2,20 @@ namespace GameRoomPacket;
 
 table RoomPacket{ }
 
+struct Vector2 {
+    x:float;
+    y:float;
+}
+
 table C2S_EnterGameRoomPacket {
-  playerId:short;
-  playerName:string;
+	playerId:short;
+	playerName:string;
+}
+
+table C2S_MoveInputPacket {
+	velocity:float;
+	position:Vector2;
+	
 }
 
 root_type RoomPacket;

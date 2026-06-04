@@ -347,7 +347,7 @@ namespace Google.FlatBuffers
 
             if(!ByteBuffer.IsSupportedType<T>())
             {
-                throw new ArgumentException("Cannot add this Type array to the builder");
+                throw new ArgumentException("Cannot add this Type array to the _builder");
             }
 
             int size = ByteBuffer.SizeOf<T>();
@@ -384,7 +384,7 @@ namespace Google.FlatBuffers
 
             if(!ByteBuffer.IsSupportedType<T>())
             {
-                throw new ArgumentException("Cannot add this Type array to the builder");
+                throw new ArgumentException("Cannot add this Type array to the _builder");
             }
 
             int size = ByteBuffer.SizeOf<T>();
