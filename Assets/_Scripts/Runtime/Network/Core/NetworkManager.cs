@@ -1,3 +1,4 @@
+using Runtime.Networks;
 using UnityEngine;
 
 namespace Runtime.Shared.Core
@@ -6,6 +7,9 @@ namespace Runtime.Shared.Core
     {
         public static NetworkManager Instance => _instance;
         private static NetworkManager _instance;
+
+        public LoginService Login { get; private set; }
+        public LobbyService Lobby { get; private set; }
 
         public void Awake()
         {
@@ -19,6 +23,9 @@ namespace Runtime.Shared.Core
                 Destroy(gameObject);
                 return;
             }
+
+            Login = new LoginService();
+            Lobby = new LobbyService();
         }
 
         private void Update()
