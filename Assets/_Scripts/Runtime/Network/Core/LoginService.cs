@@ -1,5 +1,6 @@
 using BackEnd;
 using System;
+using System.Threading.Tasks;
 using Utility.Debug;
 
 namespace Runtime.Networks
@@ -61,7 +62,7 @@ namespace Runtime.Networks
         private event Action<int> UpdateNicknameFailed;
 
         private event Action ValidateNicknameCompleted;
-        private event Action<int> VaValidateNicknameFailed;
+        private event Action<int> ValidateNicknameFailed;
 
         public void CustomSignup(string id, string password,
             Action signUpCompleted = null, Action<int> signUpFailed = null)
@@ -76,7 +77,8 @@ namespace Runtime.Networks
 
         private void HandleSignup(BackendReturnObject bro)
         {
-            if (bro.IsSuccess() && bro.StatusCode == (int)SignUpError.Success)
+            bool isSuccess = bro.IsSuccess();
+            if (isSuccess && bro.StatusCode == (int)SignUpError.Success)
             {
                 CustomLog.LogSuccess("회원 가입에 성공했습니다.");
                 SignUpCompleted?.Invoke();
@@ -84,7 +86,8 @@ namespace Runtime.Networks
             }
             else
             {
-                CustomLog.LogSuccess("회원 가입에 실패했습니다.");
+                CustomLog.LogError($"회원 가입에 실패했습니다. IsSuccess : {isSuccess}, ErrorCode : {(SignUpError)bro.StatusCode}");
+                CustomLog.LogError($"Message : {bro.ErrorMessage}");
                 SignUpFailed?.Invoke(bro.StatusCode);
                 SignUpFailed = null;
             }
@@ -131,6 +134,8 @@ namespace Runtime.Networks
 
         private void HandleValidateNickname(BackendReturnObject bro)
         {
+            CustomLog.Log($"{Backend.IsInitialized}");
+            CustomLog.Log($"{bro.IsSuccess()}, {(NicknameError)bro.StatusCode}, {bro.Code}");
             if(bro.IsSuccess() && bro.StatusCode == (int)NicknameError.Success)
             {
                 CustomLog.LogSuccess("닉네임 유효성 검사에 성공했습니다.");
@@ -139,9 +144,9 @@ namespace Runtime.Networks
             }
             else
             {
-                CustomLog.LogSuccess("닉네임 유효성 검사에 실패했습니다.");
-                VaValidateNicknameFailed?.Invoke(bro.StatusCode);
-                VaValidateNicknameFailed = null;
+                CustomLog.LogError("닉네임 유효성 검사에 실패했습니다.");
+                ValidateNicknameFailed?.Invoke(bro.StatusCode);
+                ValidateNicknameFailed = null;
             }
         }
 

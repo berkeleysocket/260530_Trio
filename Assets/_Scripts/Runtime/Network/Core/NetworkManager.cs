@@ -1,3 +1,4 @@
+using BackEnd;
 using Runtime.Networks;
 using UnityEngine;
 
@@ -24,8 +25,7 @@ namespace Runtime.Shared.Core
                 return;
             }
 
-            Login = new LoginService();
-            Lobby = new LobbyService();
+            Initialize();
         }
 
         private void Update()
@@ -42,6 +42,9 @@ namespace Runtime.Shared.Core
 
         private void Initialize() 
         {
+            Backend.Initialize();
+            Login = new LoginService();
+            Lobby = new LobbyService();
         }
     }
 }
