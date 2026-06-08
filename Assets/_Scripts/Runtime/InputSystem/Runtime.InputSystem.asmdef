@@ -3,6 +3,8 @@
     "rootNamespace": "Runtime.InputSystem",
     "references": [
         "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:d861684d3ae6f1d49ae3d38f2f910f04",
+        "GUID:bc034b1dffce4df449df2fc092dcb1b5",
         "GUID:e0514970924c0f94cb1e7e98b674452b"
     ],
     "includePlatforms": [],

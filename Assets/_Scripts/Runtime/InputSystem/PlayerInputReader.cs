@@ -1,3 +1,5 @@
+using Runtime.Utility;
+using Runtime.Utility.EventChannel;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -7,9 +9,6 @@ namespace Runtime.InputSystem
     [CreateAssetMenu(fileName = "PlayerInputReader", menuName = "KSY/SO/InputReader/PlayerInputReader")]
     public class PlayerInputReader : InputReaderBaseSO, PlayerInputActions.IPlayerActions
     {
-        public event Action<float> OnMoved;
-        public event Action OnJumped;
-
         private PlayerInputActions _inputActions;
 
         public override void Initialize(PlayerInputActions inputActions)
@@ -30,13 +29,19 @@ namespace Runtime.InputSystem
         
         public void OnJump(InputAction.CallbackContext context)
         {
-            OnJumped?.Invoke();
+            if(context.started)
+            {
+                EventChannel.InvokeEvent(new JumpInputEvent());
+            }
         }
 
         public void OnMove(InputAction.CallbackContext context)
         {
-            float input = context.ReadValue<float>();
-            OnMoved?.Invoke(input);
+            if(context.started || context.canceled)
+            {
+                float input = context.ReadValue<float>();
+                EventChannel.InvokeEvent(new MoveInputEvent(input));
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-namespace KSY.Runtime.Utility.EventChannel
+namespace Runtime.Utility.EventChannel
 { 
     public abstract class GameEvent { }
 }

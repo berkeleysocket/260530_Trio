@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace KSY.Runtime.Utility.EventChannel
+namespace Runtime.Utility.EventChannel
 {
     public static class EventChannel
     {

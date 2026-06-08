@@ -1,14 +1,16 @@
 using UnityEngine;
 using System.Collections.Generic;
-
 using Runtime.Pattern;
 using System;
+using Utility.Debug;
+using Runtime.Utility.EventChannel;
 
 namespace Runtime.InputSystem
 {
     public class InputManager : MonoSingleton<InputManager>
     {
         [SerializeField] private List<InputReaderBaseSO> readerRegistry;
+        [SerializeField] private bool InitializeAll = false;
         private Dictionary<Type, InputReaderBaseSO> _readers;
         private PlayerInputActions _inputActions;
 
@@ -30,19 +32,26 @@ namespace Runtime.InputSystem
         public void Initialize()
         {
             _inputActions = new PlayerInputActions();
+            _readers = new Dictionary<Type, InputReaderBaseSO>();
 
-            foreach(InputReaderBaseSO reader in readerRegistry)
+            foreach (InputReaderBaseSO reader in readerRegistry)
             {
-                Type t = reader.GetType();
-                _readers[t] = reader;
+                _readers[reader.GetType()] = reader;
             }
+
+            if (InitializeAll)  
+                InitializeAllReader();
+
+            EventChannel.AddListener<JumpInputEvent>((evtArgs) => CustomLog.LogSuccess("Input Jump Key"));
+            EventChannel.AddListener<MoveInputEvent>((evtArgs) => CustomLog.LogSuccess("Input Move Key"));
+
+            EventChannel.AddListener<AnyKeyInputEvent>((evtArgs) => CustomLog.LogSuccess("Input Any Key"));
         }
 
         public void ReleaseReader<T>() where T : InputReaderBaseSO
         {
-            Type t = typeof(T);
-            _readers.TryGetValue(t, out InputReaderBaseSO reader);
-            reader?.Release();
+            _readers.TryGetValue(typeof(T), out InputReaderBaseSO reader);
+            reader.Release();
         }
 
         public void InitializeAllReader()

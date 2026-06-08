@@ -1,3 +1,4 @@
+using Runtime.Utility.EventChannel;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -8,8 +9,6 @@ namespace Runtime.InputSystem
     public class UIInputReader : InputReaderBaseSO, PlayerInputActions.IUIActions
     {
         private PlayerInputActions _inputActions;
-
-        public event Action OnPressedAnyKey;
 
         public override void Initialize(PlayerInputActions inputActions)
         {
@@ -29,7 +28,10 @@ namespace Runtime.InputSystem
 
         public void OnPressAnyKey(InputAction.CallbackContext context)
         {
-            OnPressedAnyKey?.Invoke();
+            if(context.started)
+            {
+                EventChannel.InvokeEvent(new AnyKeyInputEvent());
+            }
         }
     }
 }

@@ -2,9 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Runtime.Shared.Core;
-using Utility.Debug;
-using Runtime.Networks;
-using System;
 
 namespace Runtime.UI
 {
