@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "name": "InputActions",
+    "name": "PlayerInputActions",
     "maps": [
         {
             "name": "Player",
@@ -67,6 +67,34 @@
                     "processors": "",
                     "groups": "",
                     "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "UI",
+            "id": "50dd4e27-cf39-46b5-ad8a-87d61e15ae88",
+            "actions": [
+                {
+                    "name": "PressAnyKey",
+                    "type": "Button",
+                    "id": "27717755-4161-4432-8676-db3667170e20",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "5404feed-a0fc-49f3-b95d-c2b31b5324b7",
+                    "path": "<Keyboard>/anyKey",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PressAnyKey",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

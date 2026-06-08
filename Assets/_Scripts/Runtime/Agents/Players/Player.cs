@@ -2,8 +2,6 @@ namespace Runtime.Agents
 {
     public class Player : Agent
     {
-        private InputReader _inputReader;
-
         protected override void OnAwake()
         {
             base.OnAwake();

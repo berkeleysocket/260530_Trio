@@ -2,29 +2,32 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Runtime.Agents
+namespace Runtime.InputSystem
 {
-    [CreateAssetMenu(fileName = "InputSO", menuName = "KSY/SO/InputSO")]
-    public class InputSO : ScriptableObject, @InputActions.IPlayerActions
+    [CreateAssetMenu(fileName = "PlayerInputReader", menuName = "KSY/SO/InputReader/PlayerInputReader")]
+    public class PlayerInputReader : InputReaderBaseSO, PlayerInputActions.IPlayerActions
     {
         public event Action<float> OnMoved;
         public event Action OnJumped;
 
-        private @InputActions _inputActions;
+        private PlayerInputActions _inputActions;
 
-        private void OnEnable()
+        public override void Initialize(PlayerInputActions inputActions)
         {
-            _inputActions = new @InputActions();
+            this._inputActions = inputActions;
 
             _inputActions.Player.AddCallbacks(this);
             _inputActions.Enable();
         }
 
-        private void OnDisable()
+        public override void Release()
         {
+            _inputActions.Player.RemoveCallbacks(this);
             _inputActions.Disable();
         }
 
+        public override InputActionMap GetInputActionMap() => _inputActions?.Player;
+        
         public void OnJump(InputAction.CallbackContext context)
         {
             OnJumped?.Invoke();
