@@ -106,15 +106,16 @@ namespace Runtime.Networks
 
         private void HandleCustomLogin(BackendReturnObject bro)
         {
-            if(bro.IsSuccess() && bro.StatusCode == (int)LoginError.Success)
+            bool isSuccess = bro.IsSuccess();
+            if (isSuccess && bro.StatusCode == (int)LoginError.Success)
             {
-                CustomLog.LogSuccess("로그인에 성공했습니다.");
+                CustomLog.LogSuccess($"로그인에 성공했습니다. IsSuccess : {isSuccess}, ErrorCode : {(LoginError)bro.StatusCode}");
                 LoginCompleted?.Invoke();
                 LoginCompleted = null;
             }
             else
             {
-                CustomLog.LogError("회원 가입에 실패했습니다.");
+                CustomLog.LogError("로그인에 실패했습니다.");
                 LoginFailed?.Invoke(bro.StatusCode);
                 LoginFailed = null;
             }
@@ -123,7 +124,12 @@ namespace Runtime.Networks
         public void ValidateNickname(string nickname,
             Action validateNicknameCompleted = null, Action<int> validateNicknameFailed = null)
         {
-            if(string.IsNullOrEmpty(nickname) || nickname.Length > 20)
+            if(validateNicknameCompleted != null)
+                this.ValidateNicknameCompleted += validateNicknameCompleted;
+            if (validateNicknameFailed != null)
+                this.ValidateNicknameFailed += validateNicknameFailed;
+
+            if (string.IsNullOrEmpty(nickname) || nickname.Length > 20)
             {
                 validateNicknameFailed?.Invoke((int)NicknameError.InvalidLength);
                 return;
@@ -134,8 +140,6 @@ namespace Runtime.Networks
 
         private void HandleValidateNickname(BackendReturnObject bro)
         {
-            CustomLog.Log($"{Backend.IsInitialized}");
-            CustomLog.Log($"{bro.IsSuccess()}, {(NicknameError)bro.StatusCode}, {bro.Code}");
             if(bro.IsSuccess() && bro.StatusCode == (int)NicknameError.Success)
             {
                 CustomLog.LogSuccess("닉네임 유효성 검사에 성공했습니다.");
