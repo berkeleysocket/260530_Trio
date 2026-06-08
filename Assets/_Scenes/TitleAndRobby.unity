@@ -6133,6 +6133,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e30f2bba0d06904fa0b1bd3379e2128, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime.InputSystem::Runtime.InputSystem.InputManager
+  readers:
+  - {fileID: 11400000, guid: b5ab1ed5606245c49902eb5bb6ce8bbe, type: 2}
+  - {fileID: 11400000, guid: ec4d4a31145ad0a43865439d18ae3e03, type: 2}
 --- !u!1 &1814616926
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,7 +3,8 @@
     "rootNamespace": "Runtime.Networks",
     "references": [
         "GUID:d861684d3ae6f1d49ae3d38f2f910f04",
-        "GUID:d3806d3e346ecb84096b20b01619caef"
+        "GUID:d3806d3e346ecb84096b20b01619caef",
+        "GUID:e0514970924c0f94cb1e7e98b674452b"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

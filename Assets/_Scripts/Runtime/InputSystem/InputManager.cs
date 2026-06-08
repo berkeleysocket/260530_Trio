@@ -1,11 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+using Runtime.Pattern;
+
 namespace Runtime.InputSystem
 {
-    public class InputManager : MonoBehaviour
+    public class InputManager : MonoSingleton<InputManager>
     {
-        [SerializeField] private List<InputReaderBaseSO> _readers;
+        [SerializeField] private List<InputReaderBaseSO> readers;
         private PlayerInputActions _inputActions;
 
         private void Awake()
@@ -15,27 +17,28 @@ namespace Runtime.InputSystem
 
         private void OnDisable()
         {
-            Release();
+            ReleaseReaders();
         }
 
         private void OnApplicationQuit()
         {
-            Release();
+            ReleaseReaders();
         }
 
         public void Initialize()
         {
             _inputActions = new PlayerInputActions();
-
-            foreach(var reader in _readers)
-            {
-                reader.Initialize(_inputActions);
-            }
         }
 
-        public void Release()
+        public void InitializeReaders()
         {
-            foreach (var reader in _readers)
+            foreach (var reader in readers)
+                reader.Initialize(_inputActions);
+        }
+
+        public void ReleaseReaders()
+        {
+            foreach (var reader in readers)
                 reader.Release();
         }
     }

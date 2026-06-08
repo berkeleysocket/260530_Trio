@@ -1,30 +1,17 @@
 using BackEnd;
 using Runtime.Networks;
+using Runtime.Pattern;
 using UnityEngine;
 
 namespace Runtime.Shared.Core
 {
-    public class NetworkManager : MonoBehaviour
+    public class NetworkManager : MonoSingleton<NetworkManager>
     {
-        public static NetworkManager Instance => _instance;
-        private static NetworkManager _instance;
-
         public LoginService Login { get; private set; }
         public LobbyService Lobby { get; private set; }
 
-        public void Awake()
+        protected override void OnAwake()
         {
-            if (_instance == null)
-            {
-                _instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-                return;
-            }
-
             Initialize();
         }
 

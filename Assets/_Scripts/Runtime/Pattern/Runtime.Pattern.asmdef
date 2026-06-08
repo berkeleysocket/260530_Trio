@@ -1,10 +1,7 @@
 {
-    "name": "Runtime.InputSystem",
-    "rootNamespace": "Runtime.InputSystem",
-    "references": [
-        "GUID:75469ad4d38634e559750d17036d5f7c",
-        "GUID:e0514970924c0f94cb1e7e98b674452b"
-    ],
+    "name": "Runtime.Pattern",
+    "rootNamespace": "Runtime.Pattern",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

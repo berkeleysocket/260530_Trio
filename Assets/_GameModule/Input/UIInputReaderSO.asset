@@ -9,6 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21fc44e5d1c436a4bbeffc34fe52347b, type: 3}
-  m_Name: PlayerInputSO
-  m_EditorClassIdentifier: Assembly-CSharp::Runtime.Clients.Players.InputSO
+  m_Script: {fileID: 11500000, guid: bff029679a997044fa7beeacccb841a5, type: 3}
+  m_Name: UIInputReaderSO
+  m_EditorClassIdentifier: Runtime.InputSystem::Runtime.InputSystem.UIInputReader
