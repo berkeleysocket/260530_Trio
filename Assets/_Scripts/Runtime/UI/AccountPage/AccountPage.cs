@@ -7,8 +7,8 @@ namespace Runtime.UI
     {
         private void Start()
         {
-            Action<AnyKeyInputEvent> onCompleted = (eventArgs) => FadeOut();
-            EventChannel.AddListener<AnyKeyInputEvent>(onCompleted);
+            //Action<AnyKeyInputEvent> onCompleted = (eventArgs) => FadeOut();
+            //EventChannel.AddListener<AnyKeyInputEvent>(onCompleted);
         }
     }
 }

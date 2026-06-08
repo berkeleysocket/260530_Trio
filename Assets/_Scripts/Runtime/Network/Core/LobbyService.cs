@@ -1,6 +1,7 @@
 using BackEnd;
 using BackEnd.Tcp;
 using System;
+using System.Collections.Generic;
 using Utility.Debug;
 
 namespace Runtime.Networks
@@ -24,6 +25,7 @@ namespace Runtime.Networks
 
         private Action RespondToRoomInvitationCompleted;
         private Action<ErrorCode> RespondToRoomInvitationFailed;
+        private Dictionary<string, (SessionId, string)> invitationDict = new Dictionary<string, (SessionId, string)>();
 
         public void JoinMatchMakingServer(Action onCompleted = null, Action<ErrorInfo> onFailed = null)
         {
@@ -142,7 +144,13 @@ namespace Runtime.Networks
         {
             if (args.ErrInfo == ErrorCode.Success)
             {
+                string inviter = args.InviteUserInfo.m_nickName;
+                SessionId roomId = args.RoomId;
+                string roomToken = args.RoomToken;
+                invitationDict[inviter] = (roomId, roomToken);
+
                 CustomLog.LogSuccess("초대 수신에 성공했습니다.");
+                CustomLog.LogSuccess($"Inviter : {inviter}, Room Id : {roomId}, Room Token : {roomToken}");
                 MatchMakingRoomSomeoneInvited?.Invoke();
             }
         }
@@ -157,9 +165,12 @@ namespace Runtime.Networks
             }
         }
 
-        public void RespondToRoomInvitation(SessionId roomId, string roomToken, bool isAccept,
+        public void RespondToRoomInvitation(string inviterNickname, bool isAccept,
             Action onCompleted = null, Action<ErrorCode> onFailed = null)
         {
+            var roomId = invitationDict[inviterNickname].Item1;
+            var roomToken = invitationDict[inviterNickname].Item2;
+
             if (RespondToRoomInvitationCompleted != null)
                 this.RespondToRoomInvitationCompleted = onCompleted;
             if (RespondToRoomInvitationFailed != null)
@@ -175,13 +186,13 @@ namespace Runtime.Networks
         {
             if(args.ErrInfo == ErrorCode.Success)
             {
-                CustomLog.LogSuccess("초대에 대해 수락/거절을 응답을 성공했습니다");
+                CustomLog.LogSuccess("초대에 대한 수락/거절 응답을 성공했습니다");
                 RespondToRoomInvitationCompleted?.Invoke();
                 RespondToRoomInvitationCompleted = null;
             }
             else
             {
-                CustomLog.LogSuccess("초대에 대해 수락/거절을 응답을 실패했습니다");
+                CustomLog.LogSuccess("초대에 대한 수락/거절 응답을 실패했습니다");
                 RespondToRoomInvitationFailed?.Invoke(args.ErrInfo);
                 RespondToRoomInvitationFailed = null;
             }

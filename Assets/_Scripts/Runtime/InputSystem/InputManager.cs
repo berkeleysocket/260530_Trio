@@ -39,6 +39,7 @@ namespace Runtime.InputSystem
                 _readers[reader.GetType()] = reader;
             }
 
+            #region 테스트 코드
             if (InitializeAll)  
                 InitializeAllReader();
 
@@ -46,6 +47,7 @@ namespace Runtime.InputSystem
             EventChannel.AddListener<MoveInputEvent>((evtArgs) => CustomLog.LogSuccess("Input Move Key"));
 
             EventChannel.AddListener<AnyKeyInputEvent>((evtArgs) => CustomLog.LogSuccess("Input Any Key"));
+            #endregion
         }
 
         public void ReleaseReader<T>() where T : InputReaderBaseSO
