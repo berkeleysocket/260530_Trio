@@ -7014,6 +7014,7 @@ GameObject:
   - component: {fileID: 1850996671}
   - component: {fileID: 1850996673}
   - component: {fileID: 1850996672}
+  - component: {fileID: 1850996674}
   m_Layer: 5
   m_Name: InvitePopup
   m_TagString: Untagged
@@ -7081,6 +7082,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1850996670}
   m_CullTransparentMesh: 1
+--- !u!114 &1850996674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1850996670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ce420457a1b93446b83e6f75b40af60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Runtime.UI::Runtime.UI.InvitePopup
+  txt_inviteMessage: {fileID: 696414972}
+  btn_accept: {fileID: 419705923}
+  btn_decline: {fileID: 1186483237}
+  popupRect: {fileID: 1448100860}
+  duration: 0.4
+  hidePositionX: -1200
+  showPositionX: 0
 --- !u!1 &1896723840
 GameObject:
   m_ObjectHideFlags: 0

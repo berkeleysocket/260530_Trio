@@ -8,7 +8,7 @@ namespace Runtime.Networks
 {
     public class LobbyService
     {
-        public event Action MatchMakingRoomSomeoneInvited;
+        public event Action<string> MatchMakingRoomSomeoneInvited;
         public event Action<MatchMakingUserInfo> MatchMakingRoomJoined;
 
         private Action JoinMatchMakingServerCompleted;
@@ -25,7 +25,16 @@ namespace Runtime.Networks
 
         private Action RespondToRoomInvitationCompleted;
         private Action<ErrorCode> RespondToRoomInvitationFailed;
-        private Dictionary<string, (SessionId, string)> invitationDict = new Dictionary<string, (SessionId, string)>();
+        private Dictionary<string, (SessionId, string)> invitationDict;
+
+        public void Initialize()
+        {
+            invitationDict = new Dictionary<string, (SessionId, string)>();
+
+            Backend.Match.OnMatchMakingRoomSomeoneInvited = HandleMatchMakingRoomSomeoneInvited;
+            Backend.Match.OnMatchMakingRoomInviteResponse = HandleRespondedToRoomInvitation;
+            Backend.Match.OnMatchMakingRoomJoin = HandleOnMatchMakingRoomJoined;
+        }
 
         public void JoinMatchMakingServer(Action onCompleted = null, Action<ErrorInfo> onFailed = null)
         {
@@ -33,10 +42,6 @@ namespace Runtime.Networks
                 this.JoinMatchMakingServerCompleted = onCompleted;
             if (onFailed != null)
                 this.JoinMatchMakingServerFailed = onFailed;
-
-            Backend.Match.OnMatchMakingRoomSomeoneInvited = HandleMatchMakingRoomSomeoneInvited;
-            Backend.Match.OnMatchMakingRoomInviteResponse = HandleRespondedToRoomInvitation;
-            Backend.Match.OnMatchMakingRoomJoin = HandleOnMatchMakingRoomJoined;
 
             Backend.Match.OnJoinMatchMakingServer = HandleJoinedMatchMakingServer;
             Backend.Match.JoinMatchMakingServer(out ErrorInfo _);
@@ -151,7 +156,7 @@ namespace Runtime.Networks
 
                 CustomLog.LogSuccess("초대 수신에 성공했습니다.");
                 CustomLog.LogSuccess($"Inviter : {inviter}, Room Id : {roomId}, Room Token : {roomToken}");
-                MatchMakingRoomSomeoneInvited?.Invoke();
+                MatchMakingRoomSomeoneInvited?.Invoke(inviter);
             }
         }
 

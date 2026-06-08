@@ -32,6 +32,7 @@ namespace Runtime.Shared.Core
             Backend.Initialize();
             Login = new LoginService();
             Lobby = new LobbyService();
+            Lobby.Initialize();
         }
     }
 }
