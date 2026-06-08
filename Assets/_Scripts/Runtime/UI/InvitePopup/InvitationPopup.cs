@@ -12,38 +12,37 @@ namespace Runtime.UI
         [SerializeField] private Button btn_accept;
         [SerializeField] private Button btn_decline;
 
+        private RectTransform _popupRect;
+        private CanvasGroup _popupGroup;
+        private Sequence _mySequence;
+        private float _duration = 1f;
+        private float _hidePositionX = 1000f; 
+        private float _showPositionX = -50f;
         private string _inviterNickname = null;
-
-        //
-        [SerializeField] private RectTransform popupRect;
-
-        [SerializeField] private float duration = 0.4f;
-        [SerializeField] private float hidePositionX = -1200f; // 화면 왼쪽 밖 위치
-        [SerializeField] private float showPositionX = 0f;    // 화면 중앙 위치
-
         private Vector2 _hiddenPos;
         private Vector2 _shownPos;
 
         private void Awake()
         {
             Initialize();
-
-            if (popupRect == null) popupRect = GetComponent<RectTransform>();
-
-            // 위치 벡터 미리 캐싱
-            _hiddenPos = new Vector2(hidePositionX, popupRect.anchoredPosition.y);
-            _shownPos = new Vector2(showPositionX, popupRect.anchoredPosition.y);
-
-            // 시작할 때는 화면 밖에 숨겨두기
-            popupRect.anchoredPosition = _hiddenPos;
-            gameObject.SetActive(false);
         }
 
         public void Initialize()
         {
+            _popupRect = GetComponent<RectTransform>();
+            _popupGroup = GetComponent<CanvasGroup>();
+            _mySequence = DOTween.Sequence();
+
+            _hiddenPos = new Vector2(_hidePositionX, _popupRect.anchoredPosition.y);
+            _shownPos = new Vector2(_showPositionX, _popupRect.anchoredPosition.y);
+
             NetworkManager.Instance.Lobby.MatchMakingRoomSomeoneInvited += (inviterNickname) => this._inviterNickname = inviterNickname;
             btn_accept.onClick.AddListener(() => NetworkManager.Instance.Lobby.RespondToRoomInvitation(_inviterNickname, true));
             btn_decline.onClick.AddListener(() => NetworkManager.Instance.Lobby.RespondToRoomInvitation(_inviterNickname, false));
+            
+            _popupRect.anchoredPosition = _hiddenPos;
+            _popupGroup.alpha = 0;
+            _popupGroup.interactable = false;
         }
 
         public void SetMessage(string userName)
@@ -54,24 +53,24 @@ namespace Runtime.UI
         [ContextMenu("Show Popup")]
         public void ShowPopup()
         {
-            gameObject.SetActive(true);
+            _popupRect.DOKill();
 
-            popupRect.DOKill();
-            popupRect.anchoredPosition = _hiddenPos;
-
-            popupRect.DOAnchorPos(_shownPos, duration)
+            _mySequence
+                .Join(_popupGroup.DOFade(1f, 1))
+                .Join(_popupRect.DOAnchorPos(_shownPos, _duration)
                 .SetEase(Ease.OutBack)
-                .SetUpdate(true);
+                .OnComplete(()=> _popupGroup.interactable = true));
         }
 
         [ContextMenu("Hide Popup")]
         public void HidePopup()
         {
-            popupRect.DOKill();
+            _popupGroup.interactable = false;
+            _popupRect.DOKill();
 
-            popupRect.DOAnchorPos(_hiddenPos, duration)
-                .SetEase(Ease.InQuad)
-                .SetUpdate(true);
+            _mySequence.Join(_popupGroup.DOFade(0f, 1))
+                .Join(_popupRect.DOAnchorPos(_hiddenPos, _duration)
+                .SetEase(Ease.InBack));        
         }
     }
 }
