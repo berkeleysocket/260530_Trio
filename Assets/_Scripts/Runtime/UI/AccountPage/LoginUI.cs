@@ -8,7 +8,7 @@ namespace Runtime.UI
 {
     public class LoginUI : MonoBehaviour
     {
-        [SerializeField] private Button btn_login;
+        [SerializeField] private Button btn_confirm;
         [SerializeField] private Button btn_switchSignupUI;
         [SerializeField] private CanvasGroup signupGroup;
         [SerializeField] private TMP_InputField inputId;
@@ -20,7 +20,7 @@ namespace Runtime.UI
         {
             _elementGroup = GetComponent<CanvasGroup>();
 
-            btn_login.onClick.AddListener(OnClickedLoginButton);
+            btn_confirm.onClick.AddListener(OnClickedLoginButton);
             btn_switchSignupUI.onClick.AddListener(OnClickedSwitchButton);
         }
 

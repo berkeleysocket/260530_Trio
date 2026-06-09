@@ -558,6 +558,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 203510034}
+  - component: {fileID: 203510037}
   - component: {fileID: 203510036}
   - component: {fileID: 203510035}
   m_Layer: 5
@@ -686,6 +687,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 203510033}
   m_CullTransparentMesh: 1
+--- !u!114 &203510037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 203510033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72d055b8a4f34a643bbd9fe070da0083, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Runtime.UI::Runtime.UI.UIShakeEffect
+  duration: 0.5
+  strength: 35
+  vibrancy: 50
 --- !u!1 &212923986
 GameObject:
   m_ObjectHideFlags: 0
@@ -1849,7 +1865,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dc2b13bcfb0e6944aa7a5568ece509c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime.UI::Runtime.UI.LoginUI
-  btn_login: {fileID: 1109200623}
+  btn_confirm: {fileID: 1109200623}
   btn_switchSignupUI: {fileID: 2111335149}
   signupGroup: {fileID: 659319034}
   inputId: {fileID: 1831875649}
@@ -2794,7 +2810,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7581eab4c2a498409a94b8e710f35a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime.UI::Runtime.UI.SignupUI
-  btn_signup: {fileID: 0}
+  btn_confirm: {fileID: 294269232}
   btn_switchLoginUI: {fileID: 257200253}
   loginGroup: {fileID: 485966255}
   inputName: {fileID: 805373597}
@@ -5067,6 +5083,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1209763287}
+  - component: {fileID: 1209763290}
   - component: {fileID: 1209763289}
   - component: {fileID: 1209763288}
   m_Layer: 5
@@ -5093,7 +5110,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -170}
-  m_SizeDelta: {x: -50, y: 32.1}
+  m_SizeDelta: {x: -50, y: 30}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1209763288
 MonoBehaviour:
@@ -5195,6 +5212,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1209763286}
   m_CullTransparentMesh: 1
+--- !u!114 &1209763290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1209763286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72d055b8a4f34a643bbd9fe070da0083, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Runtime.UI::Runtime.UI.UIShakeEffect
+  duration: 0.5
+  strength: 35
+  vibrancy: 50
 --- !u!1 &1228400357
 GameObject:
   m_ObjectHideFlags: 0
