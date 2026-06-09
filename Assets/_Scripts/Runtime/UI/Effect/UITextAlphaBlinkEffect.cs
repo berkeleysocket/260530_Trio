@@ -4,7 +4,7 @@ using System.Collections;
 
 namespace Runtime.UI
 {
-    public class TextAlphaBlink : MonoBehaviour
+    public class UITextAlphaBlinkEffect : MonoBehaviour, IUIEffect
     {
         [SerializeField] private float blinkInterval = 1f;         
         [Range(0f, 1f)]
@@ -12,12 +12,20 @@ namespace Runtime.UI
 
         private TMP_Text _textComponent;
 
+        #region 임시 코드
         private void Awake()
         {
             _textComponent = GetComponent<TMP_Text>();
         }
 
         private void Start()
+        {
+            ActiveEffect();
+        }
+        #endregion
+
+        [ContextMenu("Active Effect")]
+        public void ActiveEffect()
         {
             StartCoroutine(AnimateAlpha());
         }
@@ -44,5 +52,6 @@ namespace Runtime.UI
                 yield return new WaitForSeconds(blinkInterval);
             }
         }
+
     }
 }
