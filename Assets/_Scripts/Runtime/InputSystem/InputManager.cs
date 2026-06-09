@@ -12,32 +12,35 @@ namespace Runtime.InputSystem
         [SerializeField] private List<InputReaderBaseSO> readerRegistry;
         [SerializeField] private bool InitializeAll = false;
         private Dictionary<Type, InputReaderBaseSO> _readers;
+        private Dictionary<Type, bool> _isReaderRegistered;
         private PlayerInputActions _inputActions;
 
         private void OnDisable()
         {
-            ReleaseAllReader();
+            DisableAllReader();
         }
 
         private void OnApplicationQuit()
         {
-            ReleaseAllReader();
+            DisableAllReader();
         }
 
         public void Initialize()
         {
             _inputActions = new PlayerInputActions();
             _readers = new Dictionary<Type, InputReaderBaseSO>();
+            _isReaderRegistered = new Dictionary<Type, bool>();
 
             foreach (InputReaderBaseSO reader in readerRegistry)
             {
-                _readers[reader.GetType()] = reader;
+                Type key = reader.GetType();
+                _readers[key] = reader;
+                _isReaderRegistered[key] = false;
+
+                reader.Initialize(_inputActions);
             }
 
             #region 테스트 코드
-            //if (InitializeAll)  
-            //    InitializeAllReader();
-
             EventChannel.AddListener<JumpInputEvent>((evtArgs) => CustomLog.LogSuccess("Input Jump Key"));
             EventChannel.AddListener<MoveInputEvent>((evtArgs) => CustomLog.LogSuccess("Input Move Key"));
 
@@ -45,27 +48,62 @@ namespace Runtime.InputSystem
             #endregion
         }
 
-        public void ReleaseReader<T>() where T : InputReaderBaseSO
+        public void RegisterReader<T>() where T : InputReaderBaseSO
         {
             if (_readers != null && _readers.Count != 0)
             {
-                _readers.TryGetValue(typeof(T), out InputReaderBaseSO reader);
-                reader.Release();
+                Type key = typeof(T);
+                _readers.TryGetValue(key, out InputReaderBaseSO reader);
+                _isReaderRegistered.TryGetValue(key, out bool isRegistered);
+
+                if (!isRegistered)
+                {
+                    reader.Enable();
+                    _isReaderRegistered[key] = true;
+                }
             }
         }
 
-        public void InitializeAllReader()
+        public void DisableReader<T>() where T : InputReaderBaseSO
         {
-            if (_readers != null && _readers.Count != 0)    
-                foreach (InputReaderBaseSO reader in _readers.Values)
-                    reader.Initialize(_inputActions);
+            if (_readers != null && _readers.Count != 0)
+            {
+                Type key = typeof(T);
+                _readers.TryGetValue(key, out InputReaderBaseSO reader);
+                _isReaderRegistered.TryGetValue(key, out bool isRegistered);
+
+                if(isRegistered)
+                {
+                    reader.Disable();
+                    _isReaderRegistered[key] = false;
+                }
+            }
         }
 
-        public void ReleaseAllReader()
+        public void RegisterAllReader()
         {
-            if(_readers != null && _readers.Count != 0)
+            if (_readers != null && _readers.Count != 0)
+            {
                 foreach (InputReaderBaseSO reader in _readers.Values)
-                    reader.Release();
+                {
+                    Type key = reader.GetType();
+                    reader.Enable();
+                    _isReaderRegistered[key] = true;
+                }
+            }
+        }
+
+        public void DisableAllReader()
+        {
+            if (_readers != null && _readers.Count != 0)
+            {
+                foreach (InputReaderBaseSO reader in _readers.Values)
+                {
+                    Type key = reader.GetType();
+                    reader.Disable();
+                    _isReaderRegistered[key] = false;
+                }
+            }
         }
     }
 }

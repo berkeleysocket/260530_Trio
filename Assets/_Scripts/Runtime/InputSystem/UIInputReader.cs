@@ -13,12 +13,18 @@ namespace Runtime.InputSystem
         public override void Initialize(PlayerInputActions inputActions)
         {
             this._inputActions = inputActions;
-
-            _inputActions.UI.AddCallbacks(this);
-            _inputActions.Enable();
         }
 
-        public override void Release()
+        public override void Enable()
+        {
+            if (_inputActions != null)
+            {
+                _inputActions.UI.AddCallbacks(this);
+                _inputActions.Enable();
+            }
+        }
+
+        public override void Disable()
         {
             if (_inputActions != null)
             {

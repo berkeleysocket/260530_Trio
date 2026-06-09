@@ -1,11 +1,14 @@
+using Runtime.InputSystem;
 using Runtime.Utility.EventChannel;
 
 namespace Runtime.UI
 {
     public class TitlePage : Page
     {
-        private void Start()
+        protected override void OnInitialized()
         {
+            base.OnInitialized();
+            InputManager.Instance.RegisterReader<UIInputReader>();
             EventChannel.AddListener<AnyKeyInputEvent>(HandlePressedAnyKey);
         }
 

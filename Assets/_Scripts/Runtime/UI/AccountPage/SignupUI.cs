@@ -33,8 +33,6 @@ namespace Runtime.UI
 
         private void OnDisable()
         {
-            if (errorMessage != null)
-                errorMessage.SetMessage(string.Empty, Color.white);
             if (inputName != null)
                 inputName.text = string.Empty;
             if (inputId != null)
