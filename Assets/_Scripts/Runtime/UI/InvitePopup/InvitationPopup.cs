@@ -55,6 +55,7 @@ namespace Runtime.UI
         [ContextMenu("Show Popup")]
         public void ShowPopup()
         {
+            _popupRect.position = _shownPos;
             _popupRect.DOKill();
 
             _mySequence
@@ -67,6 +68,7 @@ namespace Runtime.UI
         [ContextMenu("Hide Popup")]
         public void HidePopup()
         {
+            _popupRect.position = _hiddenPos;
             _popupGroup.interactable = false;
             _popupRect.DOKill();
 

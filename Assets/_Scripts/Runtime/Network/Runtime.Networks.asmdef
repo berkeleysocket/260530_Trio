@@ -2,9 +2,10 @@
     "name": "Runtime.Networks",
     "rootNamespace": "Runtime.Networks",
     "references": [
+        "GUID:bc034b1dffce4df449df2fc092dcb1b5",
+        "GUID:e0514970924c0f94cb1e7e98b674452b",
         "GUID:d861684d3ae6f1d49ae3d38f2f910f04",
-        "GUID:d3806d3e346ecb84096b20b01619caef",
-        "GUID:e0514970924c0f94cb1e7e98b674452b"
+        "GUID:d3806d3e346ecb84096b20b01619caef"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

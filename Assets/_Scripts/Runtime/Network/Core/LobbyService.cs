@@ -1,5 +1,6 @@
 using BackEnd;
 using BackEnd.Tcp;
+using Runtime.Utility.EventChannel;
 using System;
 using System.Collections.Generic;
 using Utility.Debug;
@@ -12,14 +13,8 @@ namespace Runtime.Networks
         public event Action<MatchMakingUserInfo> MatchMakingRoomJoined;
         public event Action<MatchMakingUserInfo> MatchMakingRoomLeave;
 
-        private Action OnJoinMatchMakingServerComplete;
-        private Action<ErrorInfo> JoinMatchMakingServerFailed;
-
         private Action OnLeaveMatchMakingServerComplete;
         private Action<ErrorInfo> LeaveMatchMakingServerFailed;
-
-        private Action OnCreateMatchRoomComplete;
-        private Action<ErrorCode> CreateMatchRoomFailed;
 
         private Action OnInviteUserComplete;
         private Action<ErrorCode> InviteUserFailed;
@@ -38,13 +33,8 @@ namespace Runtime.Networks
             Backend.Match.OnMatchMakingRoomLeave = HandleMatchMakingRoomLeave;
         }
 
-        public void JoinMatchMakingServer(Action onCompleted = null, Action<ErrorInfo> onFailed = null)
+        public void JoinMatchMakingServer()
         {
-            if (onCompleted != null)
-                this.OnJoinMatchMakingServerComplete = onCompleted;
-            if (onFailed != null)
-                this.JoinMatchMakingServerFailed = onFailed;
-
             Backend.Match.OnJoinMatchMakingServer = HandleJoinedMatchMakingServer;
             Backend.Match.JoinMatchMakingServer(out ErrorInfo _);
         }
@@ -54,14 +44,12 @@ namespace Runtime.Networks
             if(args.ErrInfo == ErrorInfo.Success)
             {
                 CustomLog.LogSuccess("매치메이킹 서버 접속에 성공했습니다.");
-                OnJoinMatchMakingServerComplete?.Invoke();
-                OnJoinMatchMakingServerComplete = null;
+                EventChannel.InvokeEvent(new OnJoinMatchMakingServerCompleteEvent());
             }
             else
             {
                 CustomLog.LogError("매치메이킹 서버 접속에 실패했습니다.");
-                JoinMatchMakingServerFailed?.Invoke(args.ErrInfo);
-                JoinMatchMakingServerFailed = null;
+                EventChannel.InvokeEvent(new OnJoinMatchMakingServerFailedEvent(args.ErrInfo));
             }
         }
 
@@ -92,13 +80,8 @@ namespace Runtime.Networks
             }
         }
 
-        public void CreateMatchRoom(Action onCompleted = null, Action<ErrorCode> onFailed = null)
+        public void CreateMatchRoom()
         {
-            if (onCompleted != null)
-                this.OnCreateMatchRoomComplete = onCompleted;
-            if (onFailed != null)
-                this.CreateMatchRoomFailed = onFailed;
-
             Backend.Match.OnMatchMakingRoomCreate = HandleCreateMatchRoom;
             Backend.Match.CreateMatchRoom();
         }
@@ -108,14 +91,12 @@ namespace Runtime.Networks
             if (args.ErrInfo == ErrorCode.Success)
             {
                 CustomLog.LogSuccess("매칭 룸 생성에 성공했습니다.");
-                OnCreateMatchRoomComplete?.Invoke();
-                OnCreateMatchRoomComplete = null;
+                EventChannel.InvokeEvent(new OnCreateMatchRoomCompleteEvent());
             }
             else
             {
                 CustomLog.LogError("매칭 룸 생성에 실패했습니다.");
-                CreateMatchRoomFailed?.Invoke(args.ErrInfo);
-                CreateMatchRoomFailed = null;
+                EventChannel.InvokeEvent(new OnCreateMatchRoomFailedEvent(args.ErrInfo));
             }
         }
 

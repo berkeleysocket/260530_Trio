@@ -10,7 +10,6 @@ namespace Runtime.InputSystem
     public class InputManager : MonoSingleton<InputManager>
     {
         [SerializeField] private List<InputReaderBaseSO> readerRegistry;
-        [SerializeField] private bool InitializeAll = false;
         private Dictionary<Type, InputReaderBaseSO> _readers;
         private Dictionary<Type, bool> _isReaderRegistered;
         private PlayerInputActions _inputActions;
@@ -48,7 +47,7 @@ namespace Runtime.InputSystem
             #endregion
         }
 
-        public void RegisterReader<T>() where T : InputReaderBaseSO
+        public void EnableReader<T>() where T : InputReaderBaseSO
         {
             if (_readers != null && _readers.Count != 0)
             {
@@ -80,7 +79,7 @@ namespace Runtime.InputSystem
             }
         }
 
-        public void RegisterAllReader()
+        public void EnableAllReader()
         {
             if (_readers != null && _readers.Count != 0)
             {

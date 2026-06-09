@@ -346,12 +346,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb208555a88ce87469221b561bb2a683, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime.UI::Runtime.UI.RoomUI
-  <OnFadeOutComplete>k__BackingField:
-    m_PersistentCalls:
-      m_Calls: []
-  <OnFadeInComplete>k__BackingField:
-    m_PersistentCalls:
-      m_Calls: []
   fadeInSpeed: 2.5
   fadeOutSpeed: 2.5
   userElementPrefab: {fileID: 2072064333243016876, guid: 2cf17275b82b25145800ee45f16d8db6, type: 3}
@@ -1880,8 +1874,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Runtime.UI::Runtime.UI.LoginUI
   btn_confirm: {fileID: 1109200623}
-  btn_switchSignupUI: {fileID: 2111335149}
-  signupGroup: {fileID: 659319034}
+  btn_switchSignUpUI: {fileID: 2111335149}
+  SignUpGroup: {fileID: 659319034}
   inputId: {fileID: 1831875649}
   inputPassword: {fileID: 1269755256}
   errorMessage: {fileID: 203510038}
@@ -2198,24 +2192,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06edd372f3e87b54dbecdd66011abe50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime.UI::Runtime.UI.TitlePage
-  <OnFadeOutComplete>k__BackingField:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 25936765}
-        m_TargetAssemblyTypeName: Runtime.UI.RoomPage, Runtime.UI
-        m_MethodName: FadeIn
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  <OnFadeInComplete>k__BackingField:
-    m_PersistentCalls:
-      m_Calls: []
   fadeInSpeed: 2.5
   fadeOutSpeed: 2.5
 --- !u!225 &532252905
@@ -2828,9 +2804,9 @@ MonoBehaviour:
   btn_confirm: {fileID: 294269232}
   btn_switchLoginUI: {fileID: 257200253}
   loginGroup: {fileID: 485966255}
-  inputName: {fileID: 805373597}
-  inputId: {fileID: 948236721}
-  inputPassword: {fileID: 1441857848}
+  field_name: {fileID: 805373597}
+  field_id: {fileID: 948236721}
+  field_password: {fileID: 1441857848}
   errorMessage: {fileID: 1146494196}
 --- !u!225 &659319034
 CanvasGroup:
@@ -5900,6 +5876,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72405397e203b954891dcaa0c309379a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime.Core::Runtime.Core.GameBootstrap
+  titlePage: {fileID: 532252904}
+  accountPage: {fileID: 1896723844}
+  roomPage: {fileID: 25936765}
 --- !u!1 &1398860808
 GameObject:
   m_ObjectHideFlags: 0
@@ -6363,8 +6342,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 532252901}
-  - {fileID: 25936762}
   - {fileID: 1896723841}
+  - {fileID: 25936762}
   - {fileID: 1850996671}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7096,7 +7075,6 @@ MonoBehaviour:
   readerRegistry:
   - {fileID: 11400000, guid: b5ab1ed5606245c49902eb5bb6ce8bbe, type: 2}
   - {fileID: 11400000, guid: ec4d4a31145ad0a43865439d18ae3e03, type: 2}
-  InitializeAll: 1
 --- !u!1 &1814616926
 GameObject:
   m_ObjectHideFlags: 0
@@ -7579,6 +7557,7 @@ GameObject:
   - component: {fileID: 1896723844}
   - component: {fileID: 1896723843}
   - component: {fileID: 1896723842}
+  - component: {fileID: 1896723845}
   m_Layer: 5
   m_Name: AccountPage
   m_TagString: Untagged
@@ -7657,26 +7636,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39b729cba3cc8df4eb5d208d8034f783, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime.UI::Runtime.UI.AccountPage
-  <OnFadeOutComplete>k__BackingField:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  <OnFadeInComplete>k__BackingField:
-    m_PersistentCalls:
-      m_Calls: []
   fadeInSpeed: 1
   fadeOutSpeed: 1
+  <signUI>k__BackingField: {fileID: 659319033}
+  <loginUI>k__BackingField: {fileID: 485966254}
+--- !u!225 &1896723845
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1896723840}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1968642587
 GameObject:
   m_ObjectHideFlags: 0

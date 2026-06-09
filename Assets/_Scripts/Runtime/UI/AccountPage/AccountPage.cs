@@ -1,14 +1,10 @@
-using Runtime.Utility.EventChannel;
-using System;
+using UnityEngine;
 
 namespace Runtime.UI
 {
     public class AccountPage : Page
     {
-        private void Start()
-        {
-            //Action<AnyKeyInputEvent> onCompleted = (eventArgs) => FadeOut();
-            //EventChannel.AddListener<AnyKeyInputEvent>(onCompleted);
-        }
+        [field: SerializeField] public SignUpUI signUI { get; private set; }
+        [field: SerializeField] public LoginUI loginUI { get; private set; }
     }
 }

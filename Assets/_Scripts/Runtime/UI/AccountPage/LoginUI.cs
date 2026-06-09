@@ -1,7 +1,7 @@
-using Codice.CM.Common;
 using DG.Tweening;
 using Runtime.Networks;
 using Runtime.Shared.Core;
+using Runtime.Utility.EventChannel;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,8 +11,8 @@ namespace Runtime.UI
     public class LoginUI : MonoBehaviour
     {
         [SerializeField] private Button btn_confirm;
-        [SerializeField] private Button btn_switchSignupUI;
-        [SerializeField] private CanvasGroup signupGroup;
+        [SerializeField] private Button btn_switchSignUpUI;
+        [SerializeField] private CanvasGroup SignUpGroup;
         [SerializeField] private TMP_InputField inputId;
         [SerializeField] private TMP_InputField inputPassword;
         [SerializeField] private ErrorMessageUI errorMessage;
@@ -23,8 +23,10 @@ namespace Runtime.UI
         {
             _elementGroup = GetComponent<CanvasGroup>();
 
+            EventChannel.AddListener<OnCustomLoginCompleteEvent>(OnLoginComplete);
+            EventChannel.AddListener<OnCustomLoginFailedEvent>(OnLoginFailed);
             btn_confirm.onClick.AddListener(OnClickedLoginButton);
-            btn_switchSignupUI.onClick.AddListener(OnClickedSwitchButton);
+            btn_switchSignUpUI.onClick.AddListener(OnClickedSwitchButton);
 
             errorMessage.Initialize();
         }
@@ -41,7 +43,10 @@ namespace Runtime.UI
         {
             string id = inputId.text.Trim();
             string password = inputPassword.text.Trim();
-            NetworkManager.Instance.Login.CustomLogin(id, password, OnLoginComplete, OnLoginFailed);
+
+            EventChannel.AddListener<OnCustomLoginCompleteEvent>(OnLoginComplete);
+            EventChannel.AddListener<OnCustomLoginFailedEvent>(OnLoginFailed);
+            NetworkManager.Instance.Login.CustomLogin(id, password);
         }
 
         private void OnClickedSwitchButton()
@@ -49,41 +54,42 @@ namespace Runtime.UI
             _elementGroup.interactable = false;
             _elementGroup.DOFade(0f, 0.35f)
                 .OnComplete(() => gameObject.SetActive(false));
-            signupGroup.gameObject.SetActive(true);
-            signupGroup.interactable = true;
-            signupGroup.DOFade(1f, 0.35f);
+            SignUpGroup.gameObject.SetActive(true);
+            SignUpGroup.interactable = true;
+            SignUpGroup.DOFade(1f, 0.35f);
         }
 
-        private void OnLoginComplete()
+        private void OnLoginComplete(OnCustomLoginCompleteEvent args)
         {
             string message = "로그인에 성공했습니다.";
             Color successColor = Color.green;
-            errorMessage.SetMessage(message, successColor);
+            errorMessage.SetMessage(message, successColor, false);
         }
 
-        private void OnLoginFailed(ushort errorCode)
+        private void OnLoginFailed(OnCustomLoginFailedEvent args)
         {
+            ushort errorCode = args.StatusCode;
             string message = null;
             Color failedColor = Color.red;
 
-            switch ((LoginError)errorCode)
+            switch ((LoginStatus)errorCode)
             {
-                case LoginError.DeviceInfoIsNull:
+                case LoginStatus.DeviceInfoIsNull:
                     {
                         message = "디바이스 정보를 확인할 수 없습니다.";
                         break;
                     }
-                case LoginError.UnDefined:
+                case LoginStatus.UnDefined:
                     {
                         message = "존재하지 않는 아이디입니다.";
                         break;
                     }
-                case LoginError.BlockedDevice:
+                case LoginStatus.BlockedDevice:
                     {
                         message = "서버로부터 차단당한 계정입니다.";
                         break;
                     }
-                case LoginError.WithdrawalInProcess:
+                case LoginStatus.WithdrawalInProcess:
                     {
                         message = "삭제가 진행중인 계정입니다.";
                         break;
@@ -95,7 +101,7 @@ namespace Runtime.UI
                     }
             }
 
-            errorMessage.SetMessage(message, failedColor);
+            errorMessage.SetMessage(message, failedColor, true);
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Runtime.UI
             this._messageUI.alpha = 0;
         }
 
-        public void SetMessage(string message, Color color)
+        public void SetMessage(string message, Color color, bool isShaking)
         {
             if (_fadeOutTimer != null)
             {
@@ -48,7 +48,9 @@ namespace Runtime.UI
             _messageUI.color = color;
             _messageUI.alpha = 1;
 
-            _shakeEffect.ActiveEffect();
+            if(isShaking)
+                _shakeEffect.ActiveEffect();
+
             _fadeOutTimer = StartCoroutine(FadeOutTimer());
         }
 

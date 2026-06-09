@@ -8,8 +8,8 @@ namespace Runtime.UI
 {
     public abstract class Page : MonoBehaviour
     {
-        [field: SerializeField] public UnityEvent OnFadeOutComplete { get; private set; }
-        [field: SerializeField] public UnityEvent OnFadeInComplete { get; private set; }
+        //[field: SerializeField] public UnityEvent OnFadeOutComplete { get; private set; }
+        //[field: SerializeField] public UnityEvent OnFadeInComplete { get; private set; }
 
         [SerializeField] private float fadeInSpeed = 1f;
         [SerializeField] private float fadeOutSpeed = 1f;
@@ -64,7 +64,7 @@ namespace Runtime.UI
 
             _canvasGroup.interactable = true;
             _currentFadeCoroutine = null;
-            OnFadeInComplete?.Invoke();
+            //OnFadeInComplete?.Invoke();
         }
 
         private IEnumerator FadeOutCoroutine()
@@ -79,7 +79,7 @@ namespace Runtime.UI
             }
 
             _currentFadeCoroutine = null;
-            OnFadeOutComplete?.Invoke();
+            //OnFadeOutComplete?.Invoke();
         }
     }
 }
