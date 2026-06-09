@@ -1,11 +1,10 @@
 using BackEnd;
 using System;
-using System.Threading.Tasks;
 using Utility.Debug;
 
 namespace Runtime.Networks
 {
-    public enum SignUpError
+    public enum SignUpError : ushort
     {
         Success = 201,
 
@@ -22,7 +21,7 @@ namespace Runtime.Networks
         Duplicate = 409
     }
 
-    public enum LoginError
+    public enum LoginError : ushort
     {
         Success = 200,
 
@@ -39,7 +38,7 @@ namespace Runtime.Networks
         WithdrawalInProcess = 410
     }
 
-    public enum NicknameError
+    public enum NicknameError : ushort
     {
         Success = 204,
 
@@ -53,19 +52,19 @@ namespace Runtime.Networks
     public class LoginService
     {
         private event Action OnSignUpComplete;
-        private event Action<int> SignUpFailed;
+        private event Action<ushort> SignUpFailed;
 
         private event Action OnLoginComplete;
-        private event Action<int> LoginFailed;
+        private event Action<ushort> LoginFailed;
 
         private event Action OnUpdateNicknameComplete;
-        private event Action<int> UpdateNicknameFailed;
+        private event Action<ushort> UpdateNicknameFailed;
 
         private event Action OnValidateNicknameComplete;
-        private event Action<int> ValidateNicknameFailed;
+        private event Action<ushort> ValidateNicknameFailed;
 
         public void CustomSignup(string id, string password,
-            Action onCompleted = null, Action<int> onFailed = null)
+            Action onCompleted = null, Action<ushort> onFailed = null)
         {
             if (onCompleted != null)
                 this.OnSignUpComplete += onCompleted;
@@ -78,7 +77,7 @@ namespace Runtime.Networks
         private void HandleSignup(BackendReturnObject bro)
         {
             bool isSuccess = bro.IsSuccess();
-            if (isSuccess && bro.StatusCode == (int)SignUpError.Success)
+            if (isSuccess && bro.StatusCode == (ushort)SignUpError.Success)
             {
                 CustomLog.LogSuccess("회원 가입에 성공했습니다.");
                 OnSignUpComplete?.Invoke();
@@ -88,13 +87,13 @@ namespace Runtime.Networks
             {
                 CustomLog.LogError($"회원 가입에 실패했습니다. IsSuccess : {isSuccess}, ErrorCode : {(SignUpError)bro.StatusCode}");
                 CustomLog.LogError($"Message : {bro.ErrorMessage}");
-                SignUpFailed?.Invoke(bro.StatusCode);
+                SignUpFailed?.Invoke((ushort)bro.StatusCode);
                 SignUpFailed = null;
             }
         }
 
         public void CustomLogin(string id, string password,
-            Action onCompleted = null, Action<int> onLoginFailed = null)
+            Action onCompleted = null, Action<ushort> onLoginFailed = null)
         {
             if (onCompleted != null)
                 this.OnLoginComplete += onCompleted;
@@ -107,7 +106,7 @@ namespace Runtime.Networks
         private void HandleCustomLogin(BackendReturnObject bro)
         {
             bool isSuccess = bro.IsSuccess();
-            if (isSuccess && bro.StatusCode == (int)LoginError.Success)
+            if (isSuccess && bro.StatusCode == (ushort)LoginError.Success)
             {
                 CustomLog.LogSuccess($"로그인에 성공했습니다. IsSuccess : {isSuccess}, ErrorCode : {(LoginError)bro.StatusCode}");
                 OnLoginComplete?.Invoke();
@@ -115,14 +114,14 @@ namespace Runtime.Networks
             }
             else
             {
-                CustomLog.LogError("로그인에 실패했습니다.");
-                LoginFailed?.Invoke(bro.StatusCode);
+                CustomLog.LogError($"로그인에 실패했습니다. IsSuccess : {isSuccess}, ErrorCode : {(LoginError)bro.StatusCode}");
+                LoginFailed?.Invoke((ushort)bro.StatusCode);
                 LoginFailed = null;
             }
         }
 
         public void ValidateNickname(string nickname,
-            Action onCompleted = null, Action<int> onFailed = null)
+            Action onCompleted = null, Action<ushort> onFailed = null)
         {
             if(onCompleted != null)
                 this.OnValidateNicknameComplete += onCompleted;
@@ -131,7 +130,7 @@ namespace Runtime.Networks
 
             if (string.IsNullOrEmpty(nickname) || nickname.Length > 20)
             {
-                onFailed?.Invoke((int)NicknameError.InvalidLength);
+                onFailed?.Invoke((ushort)NicknameError.InvalidLength);
                 return;
             }
 
@@ -140,7 +139,7 @@ namespace Runtime.Networks
 
         private void HandleValidateNickname(BackendReturnObject bro)
         {
-            if(bro.IsSuccess() && bro.StatusCode == (int)NicknameError.Success)
+            if(bro.IsSuccess() && bro.StatusCode == (ushort)NicknameError.Success)
             {
                 CustomLog.LogSuccess("닉네임 유효성 검사에 성공했습니다.");
                 OnValidateNicknameComplete?.Invoke();
@@ -149,13 +148,13 @@ namespace Runtime.Networks
             else
             {
                 CustomLog.LogError("닉네임 유효성 검사에 실패했습니다.");
-                ValidateNicknameFailed?.Invoke(bro.StatusCode);
+                ValidateNicknameFailed?.Invoke((ushort)bro.StatusCode);
                 ValidateNicknameFailed = null;
             }
         }
 
         public void UpdateNickname(string nickname, 
-            Action onCompleted = null, Action<int> onFailed = null)
+            Action onCompleted = null, Action<ushort> onFailed = null)
         {
             if (onCompleted != null)
                 this.OnUpdateNicknameComplete += onCompleted;
@@ -167,7 +166,7 @@ namespace Runtime.Networks
 
         private void HandleUpdateNickname(BackendReturnObject bro)
         {
-            if(bro.IsSuccess() && bro.StatusCode == (int)NicknameError.Success)
+            if(bro.IsSuccess() && bro.StatusCode == (ushort)NicknameError.Success)
             {
                 CustomLog.LogSuccess("닉네임 변경에 성공했습니다.");
                 OnUpdateNicknameComplete?.Invoke();
@@ -176,7 +175,7 @@ namespace Runtime.Networks
             else
             {
                 CustomLog.LogError("닉네임 변경에 실패했습니다.");
-                UpdateNicknameFailed?.Invoke(bro.StatusCode);
+                UpdateNicknameFailed?.Invoke((ushort)bro.StatusCode);
                 UpdateNicknameFailed = null;
             }
         }

@@ -14,7 +14,7 @@ namespace Runtime.UI
         [SerializeField] private Button btn_invite;
         [SerializeField] private TMP_InputField inputName;
 
-        private List<MatchMakingUserElementUI> visitors;
+        private List<MatchMakingUserElementUI> _visitors;
 
         private void Awake()
         {
@@ -25,7 +25,7 @@ namespace Runtime.UI
         {
             base.OnInitialized();
             
-            visitors = new List<MatchMakingUserElementUI>();
+            _visitors = new List<MatchMakingUserElementUI>();
 
             btn_invite.onClick.AddListener(OnClickedInviteButton);
         }
@@ -40,7 +40,7 @@ namespace Runtime.UI
         private void HandleMatchMakingRoomJoined(MatchMakingUserInfo user)
         {
             var visitor = Instantiate(userElementPrefab, verticalLayoutGroup.transform);
-            visitors.Add(visitor);
+            _visitors.Add(visitor);
         }
     }
 }
