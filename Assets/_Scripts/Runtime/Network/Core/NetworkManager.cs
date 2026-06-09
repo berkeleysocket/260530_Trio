@@ -1,7 +1,6 @@
 using BackEnd;
 using Runtime.Networks;
 using Runtime.Pattern;
-using UnityEngine;
 
 namespace Runtime.Shared.Core
 {
@@ -10,29 +9,20 @@ namespace Runtime.Shared.Core
         public LoginService Login { get; private set; }
         public LobbyService Lobby { get; private set; }
 
-        protected override void OnAwake()
-        {
-            Initialize();
-        }
+        private bool _initialized = false;
 
-        private void Update()
+        public void Initialize() 
         {
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                //StartVisitor();
-            }
-            if (Input.GetKeyDown(KeyCode.H))
-            {
-                //StartHost();
-            }
-        }
-
-        private void Initialize() 
-        {
+            if (_initialized || Instance == null) return;
+            
             Backend.Initialize();
+            
             Login = new LoginService();
             Lobby = new LobbyService();
+            
             Lobby.Initialize();
+
+            _initialized = true;
         }
     }
 }

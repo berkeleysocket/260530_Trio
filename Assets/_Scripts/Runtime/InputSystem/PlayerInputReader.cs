@@ -1,6 +1,4 @@
-using Runtime.Utility;
 using Runtime.Utility.EventChannel;
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -21,8 +19,11 @@ namespace Runtime.InputSystem
 
         public override void Release()
         {
-            _inputActions.Player.RemoveCallbacks(this);
-            _inputActions.Disable();
+            if(_inputActions != null)
+            {
+                _inputActions.Player.RemoveCallbacks(this);
+                _inputActions.Disable();
+            }
         }
 
         public override InputActionMap GetInputActionMap() => _inputActions?.Player;

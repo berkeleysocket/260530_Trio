@@ -27,7 +27,13 @@ namespace Runtime.Pattern
 
         private void Awake()
         {
-            if(_instance == null)
+            if (_instance == this)
+            {
+                DontDestroyOnLoad(gameObject);
+                return;
+            }
+
+            if (_instance == null)
             {
                 _instance = this as T;
                 DontDestroyOnLoad(gameObject);

@@ -14,11 +14,6 @@ namespace Runtime.InputSystem
         private Dictionary<Type, InputReaderBaseSO> _readers;
         private PlayerInputActions _inputActions;
 
-        private void Awake()
-        {
-            Initialize();
-        }
-
         private void OnDisable()
         {
             ReleaseAllReader();
@@ -40,8 +35,8 @@ namespace Runtime.InputSystem
             }
 
             #region 테스트 코드
-            if (InitializeAll)  
-                InitializeAllReader();
+            //if (InitializeAll)  
+            //    InitializeAllReader();
 
             EventChannel.AddListener<JumpInputEvent>((evtArgs) => CustomLog.LogSuccess("Input Jump Key"));
             EventChannel.AddListener<MoveInputEvent>((evtArgs) => CustomLog.LogSuccess("Input Move Key"));
@@ -52,20 +47,25 @@ namespace Runtime.InputSystem
 
         public void ReleaseReader<T>() where T : InputReaderBaseSO
         {
-            _readers.TryGetValue(typeof(T), out InputReaderBaseSO reader);
-            reader.Release();
+            if (_readers != null && _readers.Count != 0)
+            {
+                _readers.TryGetValue(typeof(T), out InputReaderBaseSO reader);
+                reader.Release();
+            }
         }
 
         public void InitializeAllReader()
         {
-            foreach (InputReaderBaseSO reader in _readers.Values)
-                reader.Initialize(_inputActions);
+            if (_readers != null && _readers.Count != 0)    
+                foreach (InputReaderBaseSO reader in _readers.Values)
+                    reader.Initialize(_inputActions);
         }
 
         public void ReleaseAllReader()
         {
-            foreach (InputReaderBaseSO reader in _readers.Values)
-                reader.Release();
+            if(_readers != null && _readers.Count != 0)
+                foreach (InputReaderBaseSO reader in _readers.Values)
+                    reader.Release();
         }
     }
 }

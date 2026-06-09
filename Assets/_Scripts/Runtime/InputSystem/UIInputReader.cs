@@ -20,12 +20,15 @@ namespace Runtime.InputSystem
 
         public override void Release()
         {
-            _inputActions.UI.RemoveCallbacks(this);
-            _inputActions.UI.Disable();
+            if (_inputActions != null)
+            {
+                _inputActions.UI.RemoveCallbacks(this);
+                _inputActions.UI.Disable();
+            }
         }
 
-        public override InputActionMap GetInputActionMap() => _inputActions.UI;
-
+        public override InputActionMap GetInputActionMap() => _inputActions?.UI;
+        
         public void OnPressAnyKey(InputAction.CallbackContext context)
         {
             if(context.started)
