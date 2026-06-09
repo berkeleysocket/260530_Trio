@@ -36,7 +36,7 @@ namespace Runtime.UI
             _hiddenPos = new Vector2(_hidePositionX, _popupRect.anchoredPosition.y);
             _shownPos = new Vector2(_showPositionX, _popupRect.anchoredPosition.y);
 
-            NetworkManager.Instance.Lobby.MatchMakingRoomSomeoneInvited += (inviterNickname) => this._inviterNickname = inviterNickname;
+            NetworkManager.Instance.Lobby.MatchMakingRoomSomeoneInvited += HandleMatchMakingRoomSomeoneInvited;
             btn_accept.onClick.AddListener(() => NetworkManager.Instance.Lobby.RespondToRoomInvitation(_inviterNickname, true));
             btn_decline.onClick.AddListener(() => NetworkManager.Instance.Lobby.RespondToRoomInvitation(_inviterNickname, false));
             
@@ -45,9 +45,11 @@ namespace Runtime.UI
             _popupGroup.interactable = false;
         }
 
-        public void SetMessage(string userName)
+        public void HandleMatchMakingRoomSomeoneInvited(string userName)
         {
             txt_inviteMessage.text = $"{userName}(이)가 당신에게 초대를 보냈습니다!";
+
+            ShowPopup();
         }
 
         [ContextMenu("Show Popup")]

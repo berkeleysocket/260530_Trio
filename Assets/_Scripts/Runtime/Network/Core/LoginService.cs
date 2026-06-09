@@ -52,25 +52,25 @@ namespace Runtime.Networks
 
     public class LoginService
     {
-        private event Action SignUpCompleted;
+        private event Action OnSignUpComplete;
         private event Action<int> SignUpFailed;
 
-        private event Action LoginCompleted;
+        private event Action OnLoginComplete;
         private event Action<int> LoginFailed;
 
-        private event Action UpdateNicknameCompleted;
+        private event Action OnUpdateNicknameComplete;
         private event Action<int> UpdateNicknameFailed;
 
-        private event Action ValidateNicknameCompleted;
+        private event Action OnValidateNicknameComplete;
         private event Action<int> ValidateNicknameFailed;
 
         public void CustomSignup(string id, string password,
-            Action signUpCompleted = null, Action<int> signUpFailed = null)
+            Action onCompleted = null, Action<int> onFailed = null)
         {
-            if (signUpCompleted != null)
-                this.SignUpCompleted += signUpCompleted;
-            if (signUpFailed != null)
-                this.SignUpFailed += signUpFailed;
+            if (onCompleted != null)
+                this.OnSignUpComplete += onCompleted;
+            if (onFailed != null)
+                this.SignUpFailed += onFailed;
 
             Backend.BMember.CustomSignUp(id, password, HandleSignup);
         }
@@ -81,8 +81,8 @@ namespace Runtime.Networks
             if (isSuccess && bro.StatusCode == (int)SignUpError.Success)
             {
                 CustomLog.LogSuccess("회원 가입에 성공했습니다.");
-                SignUpCompleted?.Invoke();
-                SignUpCompleted = null;
+                OnSignUpComplete?.Invoke();
+                OnSignUpComplete = null;
             }
             else
             {
@@ -94,12 +94,12 @@ namespace Runtime.Networks
         }
 
         public void CustomLogin(string id, string password,
-            Action loginCompleted = null, Action<int> loginFailed = null)
+            Action onCompleted = null, Action<int> onLoginFailed = null)
         {
-            if (loginCompleted != null)
-                this.LoginCompleted += loginCompleted;
-            if (loginFailed != null)
-                this.LoginFailed += loginFailed;
+            if (onCompleted != null)
+                this.OnLoginComplete += onCompleted;
+            if (onLoginFailed != null)
+                this.LoginFailed += onLoginFailed;
 
             Backend.BMember.CustomLogin(id, password, HandleCustomLogin);
         }
@@ -110,8 +110,8 @@ namespace Runtime.Networks
             if (isSuccess && bro.StatusCode == (int)LoginError.Success)
             {
                 CustomLog.LogSuccess($"로그인에 성공했습니다. IsSuccess : {isSuccess}, ErrorCode : {(LoginError)bro.StatusCode}");
-                LoginCompleted?.Invoke();
-                LoginCompleted = null;
+                OnLoginComplete?.Invoke();
+                OnLoginComplete = null;
             }
             else
             {
@@ -122,16 +122,16 @@ namespace Runtime.Networks
         }
 
         public void ValidateNickname(string nickname,
-            Action validateNicknameCompleted = null, Action<int> validateNicknameFailed = null)
+            Action onCompleted = null, Action<int> onFailed = null)
         {
-            if(validateNicknameCompleted != null)
-                this.ValidateNicknameCompleted += validateNicknameCompleted;
-            if (validateNicknameFailed != null)
-                this.ValidateNicknameFailed += validateNicknameFailed;
+            if(onCompleted != null)
+                this.OnValidateNicknameComplete += onCompleted;
+            if (onFailed != null)
+                this.ValidateNicknameFailed += onFailed;
 
             if (string.IsNullOrEmpty(nickname) || nickname.Length > 20)
             {
-                validateNicknameFailed?.Invoke((int)NicknameError.InvalidLength);
+                onFailed?.Invoke((int)NicknameError.InvalidLength);
                 return;
             }
 
@@ -143,8 +143,8 @@ namespace Runtime.Networks
             if(bro.IsSuccess() && bro.StatusCode == (int)NicknameError.Success)
             {
                 CustomLog.LogSuccess("닉네임 유효성 검사에 성공했습니다.");
-                ValidateNicknameCompleted?.Invoke();
-                ValidateNicknameCompleted = null;
+                OnValidateNicknameComplete?.Invoke();
+                OnValidateNicknameComplete = null;
             }
             else
             {
@@ -155,12 +155,12 @@ namespace Runtime.Networks
         }
 
         public void UpdateNickname(string nickname, 
-            Action updateNicknameCompleted = null, Action<int> updateNicknameFailed = null)
+            Action onCompleted = null, Action<int> onFailed = null)
         {
-            if (updateNicknameCompleted != null)
-                this.UpdateNicknameCompleted += updateNicknameCompleted;
-            if (updateNicknameFailed != null)
-                this.UpdateNicknameFailed += updateNicknameFailed;
+            if (onCompleted != null)
+                this.OnUpdateNicknameComplete += onCompleted;
+            if (onFailed != null)
+                this.UpdateNicknameFailed += onFailed;
 
             Backend.BMember.UpdateNickname(nickname, HandleUpdateNickname);
         }
@@ -170,8 +170,8 @@ namespace Runtime.Networks
             if(bro.IsSuccess() && bro.StatusCode == (int)NicknameError.Success)
             {
                 CustomLog.LogSuccess("닉네임 변경에 성공했습니다.");
-                UpdateNicknameCompleted?.Invoke();
-                UpdateNicknameCompleted = null;
+                OnUpdateNicknameComplete?.Invoke();
+                OnUpdateNicknameComplete = null;
             }
             else
             {

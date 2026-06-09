@@ -1,0 +1,46 @@
+using Runtime.Shared.Core;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using BackEnd.Tcp;
+
+namespace Runtime.UI
+{
+    public class RoomPage : Page
+    {
+        [SerializeField] private MatchMakingUserElementUI userElementPrefab;
+        [SerializeField] private VerticalLayoutGroup verticalLayoutGroup;
+        [SerializeField] private Button btn_invite;
+        [SerializeField] private TMP_InputField inputName;
+
+        private List<MatchMakingUserElementUI> visitors;
+
+        private void Awake()
+        {
+            Initialize();
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            
+            visitors = new List<MatchMakingUserElementUI>();
+
+            btn_invite.onClick.AddListener(OnClickedInviteButton);
+        }
+
+        private void OnClickedInviteButton()
+        {
+            string userName = inputName.text.Trim();
+            NetworkManager.Instance.Lobby.MatchMakingRoomJoined += HandleMatchMakingRoomJoined;
+            NetworkManager.Instance.Lobby.InviteUser(userName);  
+        }
+
+        private void HandleMatchMakingRoomJoined(MatchMakingUserInfo user)
+        {
+            var visitor = Instantiate(userElementPrefab, verticalLayoutGroup.transform);
+            visitors.Add(visitor);
+        }
+    }
+}

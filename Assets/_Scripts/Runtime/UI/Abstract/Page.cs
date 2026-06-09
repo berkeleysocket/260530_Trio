@@ -2,11 +2,15 @@ using System;
 using System.Collections;
 using UnityEditor.Build;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Runtime.UI
 {
     public abstract class Page : MonoBehaviour
     {
+        [field: SerializeField] public UnityEvent OnFadeOutComplete { get; private set; }
+        [field: SerializeField] public UnityEvent OnFadeInComplete { get; private set; }
+
         [SerializeField] private float fadeInSpeed = 1f;
         [SerializeField] private float fadeOutSpeed = 1f;
 
@@ -21,29 +25,33 @@ namespace Runtime.UI
         public void Initialize()
         {
             _canvasGroup = GetComponent<CanvasGroup>();
+
+            OnInitialized();
         }
 
+        protected virtual void OnInitialized() { }
+
         [ContextMenu("Fade In")]
-        public void FadeIn(Action onCompleted = null)
+        public void FadeIn()
         {
             if (_currentFadeCoroutine == null)
             {
                 _canvasGroup.interactable = false;
-                _currentFadeCoroutine = StartCoroutine(FadeInCoroutine(onCompleted));
+                _currentFadeCoroutine = StartCoroutine(FadeInCoroutine());
             }
         }
 
         [ContextMenu("Fade Out")]
-        public void FadeOut(Action onCompleted = null)
+        public void FadeOut()
         {
             if(_currentFadeCoroutine == null)
             {
                 _canvasGroup.interactable = false;
-                _currentFadeCoroutine = StartCoroutine(FadeOutCoroutine(onCompleted));
+                _currentFadeCoroutine = StartCoroutine(FadeOutCoroutine());
             }
         }
 
-        private IEnumerator FadeInCoroutine(Action onCompleted)
+        private IEnumerator FadeInCoroutine()
         {
             float a = 0;
             while (a < 1)
@@ -56,10 +64,10 @@ namespace Runtime.UI
 
             _canvasGroup.interactable = true;
             _currentFadeCoroutine = null;
-            onCompleted?.Invoke();
+            OnFadeInComplete?.Invoke();
         }
 
-        private IEnumerator FadeOutCoroutine(Action onCompleted)
+        private IEnumerator FadeOutCoroutine()
         {
             float a = 1;
             while(a > 0)
@@ -71,7 +79,7 @@ namespace Runtime.UI
             }
 
             _currentFadeCoroutine = null;
-            onCompleted?.Invoke();
+            OnFadeOutComplete?.Invoke();
         }
     }
 }

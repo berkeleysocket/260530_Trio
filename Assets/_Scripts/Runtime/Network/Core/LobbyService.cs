@@ -10,20 +10,21 @@ namespace Runtime.Networks
     {
         public event Action<string> MatchMakingRoomSomeoneInvited;
         public event Action<MatchMakingUserInfo> MatchMakingRoomJoined;
+        public event Action<MatchMakingUserInfo> MatchMakingRoomLeave;
 
-        private Action JoinMatchMakingServerCompleted;
+        private Action OnJoinMatchMakingServerComplete;
         private Action<ErrorInfo> JoinMatchMakingServerFailed;
 
-        private Action LeaveMatchMakingServerCompleted;
+        private Action OnLeaveMatchMakingServerComplete;
         private Action<ErrorInfo> LeaveMatchMakingServerFailed;
 
-        private Action CreateMatchRoomCompleted;
+        private Action OnCreateMatchRoomComplete;
         private Action<ErrorCode> CreateMatchRoomFailed;
 
-        private Action InviteUserCompleted;
+        private Action OnInviteUserComplete;
         private Action<ErrorCode> InviteUserFailed;
 
-        private Action RespondToRoomInvitationCompleted;
+        private Action OnRespondToRoomInvitationComplete;
         private Action<ErrorCode> RespondToRoomInvitationFailed;
         private Dictionary<string, (SessionId, string)> invitationDict;
 
@@ -33,13 +34,14 @@ namespace Runtime.Networks
 
             Backend.Match.OnMatchMakingRoomSomeoneInvited = HandleMatchMakingRoomSomeoneInvited;
             Backend.Match.OnMatchMakingRoomInviteResponse = HandleRespondedToRoomInvitation;
-            Backend.Match.OnMatchMakingRoomJoin = HandleOnMatchMakingRoomJoined;
+            Backend.Match.OnMatchMakingRoomJoin = HandleMatchMakingRoomJoined;
+            Backend.Match.OnMatchMakingRoomLeave = HandleMatchMakingRoomLeave;
         }
 
         public void JoinMatchMakingServer(Action onCompleted = null, Action<ErrorInfo> onFailed = null)
         {
             if (onCompleted != null)
-                this.JoinMatchMakingServerCompleted = onCompleted;
+                this.OnJoinMatchMakingServerComplete = onCompleted;
             if (onFailed != null)
                 this.JoinMatchMakingServerFailed = onFailed;
 
@@ -52,8 +54,8 @@ namespace Runtime.Networks
             if(args.ErrInfo == ErrorInfo.Success)
             {
                 CustomLog.LogSuccess("매치메이킹 서버 접속에 성공했습니다.");
-                JoinMatchMakingServerCompleted?.Invoke();
-                JoinMatchMakingServerCompleted = null;
+                OnJoinMatchMakingServerComplete?.Invoke();
+                OnJoinMatchMakingServerComplete = null;
             }
             else
             {
@@ -66,7 +68,7 @@ namespace Runtime.Networks
         public void LeaveMatchMakingServer(Action onCompleted = null, Action<ErrorInfo> onFailed = null)
         {
             if (onCompleted != null)
-                this.LeaveMatchMakingServerCompleted = onCompleted;
+                this.OnLeaveMatchMakingServerComplete = onCompleted;
             else if (onFailed != null)
                 this.LeaveMatchMakingServerFailed = onFailed;
 
@@ -79,8 +81,8 @@ namespace Runtime.Networks
             if(args.ErrInfo == ErrorInfo.Success)
             {
                 CustomLog.LogSuccess("매치메이킹 서버 접속 종료에 성공했습니다.");
-                LeaveMatchMakingServerCompleted?.Invoke();
-                LeaveMatchMakingServerCompleted = null;
+                OnLeaveMatchMakingServerComplete?.Invoke();
+                OnLeaveMatchMakingServerComplete = null;
             }
             else
             {
@@ -93,7 +95,7 @@ namespace Runtime.Networks
         public void CreateMatchRoom(Action onCompleted = null, Action<ErrorCode> onFailed = null)
         {
             if (onCompleted != null)
-                this.CreateMatchRoomCompleted = onCompleted;
+                this.OnCreateMatchRoomComplete = onCompleted;
             if (onFailed != null)
                 this.CreateMatchRoomFailed = onFailed;
 
@@ -106,8 +108,8 @@ namespace Runtime.Networks
             if (args.ErrInfo == ErrorCode.Success)
             {
                 CustomLog.LogSuccess("매칭 룸 생성에 성공했습니다.");
-                CreateMatchRoomCompleted?.Invoke();
-                CreateMatchRoomCompleted = null;
+                OnCreateMatchRoomComplete?.Invoke();
+                OnCreateMatchRoomComplete = null;
             }
             else
             {
@@ -121,7 +123,7 @@ namespace Runtime.Networks
             Action<ErrorCode> onFailed = null)
         {
             if (onCompleted != null)
-                InviteUserCompleted = onCompleted;
+                OnInviteUserComplete = onCompleted;
             if (onFailed != null)
                 InviteUserFailed = onFailed;
 
@@ -134,8 +136,8 @@ namespace Runtime.Networks
             if (args.ErrInfo == ErrorCode.Success)
             {
                 CustomLog.LogSuccess("유저 초대에 성공했습니다.");
-                InviteUserCompleted?.Invoke();
-                InviteUserCompleted = null;
+                OnInviteUserComplete?.Invoke();
+                OnInviteUserComplete = null;
             }
             else
             {
@@ -160,7 +162,7 @@ namespace Runtime.Networks
             }
         }
 
-        private void HandleOnMatchMakingRoomJoined(MatchMakingGamerInfoInRoomEventArgs args)
+        private void HandleMatchMakingRoomJoined(MatchMakingGamerInfoInRoomEventArgs args)
         {
             if (args.ErrInfo == ErrorCode.Success)
             {
@@ -176,8 +178,8 @@ namespace Runtime.Networks
             var roomId = invitationDict[inviterNickname].Item1;
             var roomToken = invitationDict[inviterNickname].Item2;
 
-            if (RespondToRoomInvitationCompleted != null)
-                this.RespondToRoomInvitationCompleted = onCompleted;
+            if (OnRespondToRoomInvitationComplete != null)
+                this.OnRespondToRoomInvitationComplete = onCompleted;
             if (RespondToRoomInvitationFailed != null)
                 this.RespondToRoomInvitationFailed = onFailed;
             
@@ -192,14 +194,25 @@ namespace Runtime.Networks
             if(args.ErrInfo == ErrorCode.Success)
             {
                 CustomLog.LogSuccess("초대에 대한 수락/거절 응답을 성공했습니다");
-                RespondToRoomInvitationCompleted?.Invoke();
-                RespondToRoomInvitationCompleted = null;
+                OnRespondToRoomInvitationComplete?.Invoke();
+                OnRespondToRoomInvitationComplete = null;
             }
             else
             {
                 CustomLog.LogSuccess("초대에 대한 수락/거절 응답을 실패했습니다");
                 RespondToRoomInvitationFailed?.Invoke(args.ErrInfo);
                 RespondToRoomInvitationFailed = null;
+            }
+        }
+
+        private void HandleMatchMakingRoomLeave(MatchMakingGamerInfoInRoomEventArgs args)
+        {
+            if(args.ErrInfo == ErrorCode.Success)
+            {
+                MatchMakingUserInfo user = args.UserInfo;
+                CustomLog.LogSuccess($"{user.m_nickName}(이)가 퇴장에 성공했습니다.");
+                MatchMakingRoomLeave?.Invoke(user);
+                MatchMakingRoomLeave = null;
             }
         }
     }

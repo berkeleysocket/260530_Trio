@@ -1,3 +1,4 @@
+using Runtime.Shared.Core;
 using Runtime.Utility.EventChannel;
 using System;
 
@@ -7,8 +8,17 @@ namespace Runtime.UI
     {
         private void Start()
         {
-            Action<AnyKeyInputEvent> onCompleted = (eventArgs)=> FadeOut();
-            EventChannel.AddListener<AnyKeyInputEvent>(onCompleted);
+            EventChannel.AddListener<AnyKeyInputEvent>(HandlePressedAnyKey);
+        }
+
+        private void OnDisable()
+        {
+            EventChannel.RemoveListener<AnyKeyInputEvent>(HandlePressedAnyKey);
+        }
+
+        private void HandlePressedAnyKey(AnyKeyInputEvent args)
+        {
+            FadeOut();
         }
     }
 }
