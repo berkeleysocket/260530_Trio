@@ -11,18 +11,23 @@ namespace Runtime.Shared.Core
 
         private bool _initialized = false;
 
-        public void Initialize() 
+        public void Initialize()
         {
             if (_initialized || Instance == null) return;
-            
+
             Backend.Initialize();
-            
+
             Login = new LoginService();
             Lobby = new LobbyService();
-            
+
             Lobby.Initialize();
 
             _initialized = true;
+        }
+
+        private void Update()
+        {
+            Backend.Match.Poll();
         }
     }
 }

@@ -1,19 +1,14 @@
 using System;
 using System.Collections;
-using UnityEditor.Build;
 using UnityEngine;
-using UnityEngine.Events;
-
 namespace Runtime.UI
 {
     public abstract class Page : MonoBehaviour
     {
-        //[field: SerializeField] public UnityEvent OnFadeOutComplete { get; private set; }
-        //[field: SerializeField] public UnityEvent OnFadeInComplete { get; private set; }
-
         [SerializeField] private float fadeInSpeed = 1f;
         [SerializeField] private float fadeOutSpeed = 1f;
 
+        private event Action onEnable;
         private Coroutine _currentFadeCoroutine;
         private CanvasGroup _canvasGroup;
 
@@ -22,6 +17,10 @@ namespace Runtime.UI
             Initialize();
         }
 
+        private void OnEnable()
+        {
+            onEnable?.Invoke();
+        }
         public void Initialize()
         {
             _canvasGroup = GetComponent<CanvasGroup>();
@@ -31,29 +30,50 @@ namespace Runtime.UI
 
         protected virtual void OnInitialized() { }
 
-        [ContextMenu("Fade In")]
-        public void FadeIn()
+        public void Show(bool useFade)
         {
-            if (_currentFadeCoroutine == null)
-            {
-                _canvasGroup.interactable = false;
-                _currentFadeCoroutine = StartCoroutine(FadeInCoroutine());
-            }
+            gameObject.SetActive(true);
+
+            if (useFade)
+                onEnable += FadeIn;
         }
 
-        [ContextMenu("Fade Out")]
-        public void FadeOut()
+        public void Hide(bool useFade)
         {
-            if(_currentFadeCoroutine == null)
+            if (!gameObject.activeSelf) return;
+            if (useFade)
+                FadeOut();
+            else
+                gameObject.SetActive(false);
+        }
+
+        private void FadeIn()
+        {
+            onEnable -= FadeIn;
+            if (_currentFadeCoroutine != null)
             {
+                StopCoroutine(_currentFadeCoroutine);
+                _currentFadeCoroutine = null;
                 _canvasGroup.interactable = false;
-                _currentFadeCoroutine = StartCoroutine(FadeOutCoroutine());
             }
+            _currentFadeCoroutine = StartCoroutine(FadeInCoroutine());
+        }
+
+        private void FadeOut()
+        {
+            onEnable -= FadeOut;
+            if (_currentFadeCoroutine != null)
+            {
+                StopCoroutine(_currentFadeCoroutine);
+                _currentFadeCoroutine = null;
+                _canvasGroup.interactable = false;
+            }
+            _currentFadeCoroutine = StartCoroutine(FadeOutCoroutine());
         }
 
         private IEnumerator FadeInCoroutine()
         {
-            float a = 0;
+            float a = _canvasGroup.alpha;
             while (a < 1)
             {
                 a = _canvasGroup.alpha + 0.01f * fadeInSpeed;
@@ -64,13 +84,12 @@ namespace Runtime.UI
 
             _canvasGroup.interactable = true;
             _currentFadeCoroutine = null;
-            //OnFadeInComplete?.Invoke();
         }
 
         private IEnumerator FadeOutCoroutine()
         {
-            float a = 1;
-            while(a > 0)
+            float a = _canvasGroup.alpha;
+            while (a > 0)
             {
                 a = _canvasGroup.alpha - 0.01f * fadeOutSpeed;
                 _canvasGroup.alpha = a;
@@ -79,7 +98,7 @@ namespace Runtime.UI
             }
 
             _currentFadeCoroutine = null;
-            //OnFadeOutComplete?.Invoke();
+            gameObject.SetActive(false);
         }
     }
 }

@@ -7,6 +7,7 @@ using BackEnd.Tcp;
 
 namespace Runtime.UI
 {
+    [RequireComponent(typeof(CanvasGroup))]
     public class RoomPage : Page
     {
         [SerializeField] private MatchMakingUserElementUI userElementPrefab;
@@ -33,6 +34,7 @@ namespace Runtime.UI
         private void OnClickedInviteButton()
         {
             string userName = inputName.text.Trim();
+
             NetworkManager.Instance.Lobby.MatchMakingRoomJoined += HandleMatchMakingRoomJoined;
             NetworkManager.Instance.Lobby.InviteUser(userName);  
         }
@@ -40,6 +42,7 @@ namespace Runtime.UI
         private void HandleMatchMakingRoomJoined(MatchMakingUserInfo user)
         {
             var visitor = Instantiate(userElementPrefab, verticalLayoutGroup.transform);
+
             _visitors.Add(visitor);
         }
     }

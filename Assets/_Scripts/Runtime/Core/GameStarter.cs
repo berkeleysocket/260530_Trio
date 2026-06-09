@@ -6,7 +6,7 @@ using Runtime.Utility.EventChannel;
 
 namespace Runtime.Core
 {
-    public class GameBootstrap : MonoBehaviour
+    public class GameStarter : MonoBehaviour
     {
         [SerializeField] private Page titlePage;
         [SerializeField] private Page accountPage;
@@ -22,17 +22,19 @@ namespace Runtime.Core
         {
             EventChannel.AddListener<OnCustomLoginCompleteEvent>(OnCustomLoginComplete);
             EventChannel.AddListener<AnyKeyInputEvent>(OnPressedAnyKey);
+
+            accountPage.Show(false);
         }
 
         private void OnCustomLoginComplete(OnCustomLoginCompleteEvent args)
         {
-            accountPage.FadeOut();
+            accountPage.Hide(true);
+            titlePage.Show(true);
             InputManager.Instance.EnableReader<UIInputReader>();
         }
 
         private void OnPressedAnyKey(AnyKeyInputEvent args)
         {
-            titlePage.FadeOut();
             EventChannel.RemoveListener<AnyKeyInputEvent>(OnPressedAnyKey);
             EventChannel.AddListener<OnJoinMatchMakingServerCompleteEvent>(OnJoinMatchMakingServerComplete);
             NetworkManager.Instance.Lobby.JoinMatchMakingServer();
@@ -40,6 +42,7 @@ namespace Runtime.Core
 
         private void OnJoinMatchMakingServerComplete(OnJoinMatchMakingServerCompleteEvent args)
         {
+            titlePage.Hide(true);
             EventChannel.RemoveListener<OnJoinMatchMakingServerCompleteEvent>(OnJoinMatchMakingServerComplete);
             EventChannel.AddListener<OnCreateMatchRoomCompleteEvent>(OnCreateMatchRoomComplete);
             EventChannel.AddListener<OnCreateMatchRoomFailedEvent>(OnCreateMatchRoomFailed);
@@ -48,7 +51,7 @@ namespace Runtime.Core
 
         private void OnCreateMatchRoomComplete(OnCreateMatchRoomCompleteEvent args)
         {
-            roomPage.FadeIn();
+            roomPage.Show(true);
         }
 
         private void OnCreateMatchRoomFailed(OnCreateMatchRoomFailedEvent args)
