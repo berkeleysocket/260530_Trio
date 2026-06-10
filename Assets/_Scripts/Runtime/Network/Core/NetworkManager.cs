@@ -1,6 +1,8 @@
 using BackEnd;
+using Codice.CM.Client.Differences.Graphic;
 using Runtime.Networks;
 using Runtime.Pattern;
+using Runtime.Utility.EventChannel;
 
 namespace Runtime.Shared.Core
 {
@@ -8,6 +10,7 @@ namespace Runtime.Shared.Core
     {
         public LoginService Login { get; private set; }
         public LobbyService Lobby { get; private set; }
+        public Account MyAccount { get; private set; }
 
         private bool _initialized = false;
 
@@ -21,6 +24,8 @@ namespace Runtime.Shared.Core
             Lobby = new LobbyService();
 
             Lobby.Initialize();
+
+            EventChannel.AddListener<OnCustomLoginCompleteEvent>((args)=> this.MyAccount = new Account(args.Nickname));
 
             _initialized = true;
         }

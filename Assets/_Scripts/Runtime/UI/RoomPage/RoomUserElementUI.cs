@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Runtime.UI
 {
-    public class VisitorElementUI : MonoBehaviour
+    public class RoomUserElementUI : MonoBehaviour
     {
         [SerializeField] private TMP_Text txt_visitorNickname;
         

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8922152883128722454}
   - component: {fileID: 2072064333243016876}
   m_Layer: 5
-  m_Name: VisitorElementUI
+  m_Name: RoomUserElementUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

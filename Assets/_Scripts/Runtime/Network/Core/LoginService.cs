@@ -1,4 +1,5 @@
 using BackEnd;
+using LitJson;
 using Runtime.Utility.EventChannel;
 using Utility.Debug;
 
@@ -84,7 +85,9 @@ namespace Runtime.Networks
             if (isSuccess && bro.StatusCode == (ushort)LoginStatus.Success)
             {
                 CustomLog.LogSuccess($"로그인에 성공했습니다. IsSuccess : {isSuccess}, ErrorCode : {(LoginStatus)bro.StatusCode}");
-                EventChannel.InvokeEvent(new OnCustomLoginCompleteEvent());
+                string myNickname = Backend.UserNickName;
+
+                EventChannel.InvokeEvent(new OnCustomLoginCompleteEvent(myNickname));
             }
             else
             {

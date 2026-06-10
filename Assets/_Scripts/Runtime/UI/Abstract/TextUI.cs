@@ -28,7 +28,6 @@ namespace Runtime.UI
 
         public virtual void Initialize()
         {
-            CustomLog.Log("Initialize");
             this._messageCompo = GetComponent<TMP_Text>();
 
             CustomLog.Assert(_messageCompo != null, "_messageCompo is null");
@@ -44,7 +43,7 @@ namespace Runtime.UI
 
         protected virtual void OnSetMessage(bool useEffect = true)
         {
-            if(useEffect)
+            if (useEffect)
                 foreach (var effect in effects)
                     effect.ActiveEffect();
         }

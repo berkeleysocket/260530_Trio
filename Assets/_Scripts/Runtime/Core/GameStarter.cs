@@ -14,26 +14,37 @@ namespace Runtime.Core
         [SerializeField] private Page titlePage;
         [SerializeField] private Page accountPage;
         [SerializeField] private Page roomPage;
+        [SerializeField] private Popup invitationPopup;
 
         private void Awake()
         {
-            IInitializable[] initObjs = canvas.GetComponentsInChildren<IInitializable>(true);
-            foreach (IInitializable element in initObjs)
-            {
-                CustomLog.LogSuccess($"{element} Initialize");
-                element.Initialize();
-            }
-            
-            NetworkManager.Instance.Initialize();
-            InputManager.Instance.Initialize();
+            Initialize();
         }
 
         private void Start()
         {
-            EventChannel.AddListener<OnCustomLoginCompleteEvent>(OnCustomLoginComplete);
-            EventChannel.AddListener<AnyKeyInputEvent>(OnPressedAnyKey);
+            RegisterEvent();
 
             accountPage.Show();
+        }
+
+        private void Initialize()
+        {
+            IInitializable[] InitializableUIs = canvas.GetComponentsInChildren<IInitializable>(true);
+            foreach (IInitializable element in InitializableUIs)
+                element.Initialize();
+
+            NetworkManager.Instance.Initialize();
+            InputManager.Instance.Initialize();
+
+            CustomLog.LogSuccess("GameStarter Initialize");
+        }
+
+        private void RegisterEvent()
+        {
+            EventChannel.AddListener<OnCustomLoginCompleteEvent>(OnCustomLoginComplete);
+            EventChannel.AddListener<OnMatchMakingRoomSomeoneInvitedEvent>(OnMatchMakingRoomSomeoneInvited);
+            EventChannel.AddListener<AnyKeyInputEvent>(OnPressedAnyKey);
         }
 
         private void OnCustomLoginComplete(OnCustomLoginCompleteEvent args)
@@ -77,6 +88,11 @@ namespace Runtime.Core
         private void OnCreateMatchRoomFailed(OnCreateMatchRoomFailedEvent args)
         {
 
+        }
+
+        private void OnMatchMakingRoomSomeoneInvited(OnMatchMakingRoomSomeoneInvitedEvent args)
+        {
+            invitationPopup.Show();
         }
     }
 }

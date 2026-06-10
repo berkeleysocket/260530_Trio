@@ -1,12 +1,19 @@
 using BackEnd.Tcp;
-using Codice.Client.Common;
 
 namespace Runtime.Utility.EventChannel
 {
     public class NetworkEvent { }
 
     #region OnCustomLogin
-    public class OnCustomLoginCompleteEvent : GameEvent { }
+    public class OnCustomLoginCompleteEvent : GameEvent 
+    { 
+        public string Nickname { get; private set; }
+
+        public OnCustomLoginCompleteEvent(string nickname)
+        {
+            this.Nickname = nickname;
+        }
+    }
     public class OnCustomLoginFailedEvent : GameEvent
     {
         public ushort StatusCode { get; private set; }
@@ -113,7 +120,7 @@ namespace Runtime.Utility.EventChannel
     }
     #endregion
 
-    #region OnMatchMakingRoomInviteEvent
+    #region OnMatchMakingRoomInvite
     public class OnMatchMakingRoomInviteCompleteEvent : GameEvent { }
     public class OnMatchMakingRoomInviteFailedEvent : GameEvent 
     { 
@@ -136,5 +143,9 @@ namespace Runtime.Utility.EventChannel
             this.ErrorCode = errorCode;
         }
     }
+    #endregion
+
+    #region OnRemovedMail
+    public class OnRemovedMailEvent : GameEvent { }
     #endregion
 }
