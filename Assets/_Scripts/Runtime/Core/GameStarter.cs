@@ -3,17 +3,23 @@ using Runtime.InputSystem;
 using UnityEngine;
 using Runtime.UI;
 using Runtime.Utility.EventChannel;
+using Runtime.Pattern;
 
 namespace Runtime.Core
 {
     public class GameStarter : MonoBehaviour
     {
+        [SerializeField] Canvas canvas;
         [SerializeField] private Page titlePage;
         [SerializeField] private Page accountPage;
         [SerializeField] private Page roomPage;
 
         private void Awake()
         {
+            IInitializable[] initObjs = canvas.GetComponentsInChildren<IInitializable>();
+            foreach (IInitializable element in initObjs)
+                element.Initialize();
+            
             NetworkManager.Instance.Initialize();
             InputManager.Instance.Initialize();
         }
@@ -23,35 +29,45 @@ namespace Runtime.Core
             EventChannel.AddListener<OnCustomLoginCompleteEvent>(OnCustomLoginComplete);
             EventChannel.AddListener<AnyKeyInputEvent>(OnPressedAnyKey);
 
-            accountPage.Show(false);
+            accountPage.Show();
         }
 
         private void OnCustomLoginComplete(OnCustomLoginCompleteEvent args)
         {
-            accountPage.Hide(true);
-            titlePage.Show(true);
+            accountPage.Hide();
+            titlePage.Show();
+
             InputManager.Instance.EnableReader<UIInputReader>();
+
+            EventChannel.AddListener<OnJoinMatchMakingServerCompleteEvent>(OnJoinMatchMakingServerComplete);
+
+            NetworkManager.Instance.Lobby.JoinMatchMakingServer();
         }
 
         private void OnPressedAnyKey(AnyKeyInputEvent args)
         {
+            titlePage.Hide();
+
             EventChannel.RemoveListener<AnyKeyInputEvent>(OnPressedAnyKey);
-            EventChannel.AddListener<OnJoinMatchMakingServerCompleteEvent>(OnJoinMatchMakingServerComplete);
-            NetworkManager.Instance.Lobby.JoinMatchMakingServer();
+            EventChannel.RemoveListener<OnJoinMatchMakingServerCompleteEvent>(OnJoinMatchMakingServerComplete);
+
+            EventChannel.AddListener<OnCreateMatchRoomCompleteEvent>(OnCreateMatchRoomComplete);
+            EventChannel.AddListener<OnCreateMatchRoomFailedEvent>(OnCreateMatchRoomFailed);
+
+            NetworkManager.Instance.Lobby.CreateMatchRoom();
         }
 
         private void OnJoinMatchMakingServerComplete(OnJoinMatchMakingServerCompleteEvent args)
         {
-            titlePage.Hide(true);
             EventChannel.RemoveListener<OnJoinMatchMakingServerCompleteEvent>(OnJoinMatchMakingServerComplete);
-            EventChannel.AddListener<OnCreateMatchRoomCompleteEvent>(OnCreateMatchRoomComplete);
-            EventChannel.AddListener<OnCreateMatchRoomFailedEvent>(OnCreateMatchRoomFailed);
-            NetworkManager.Instance.Lobby.CreateMatchRoom();
         }
 
         private void OnCreateMatchRoomComplete(OnCreateMatchRoomCompleteEvent args)
         {
-            roomPage.Show(true);
+            EventChannel.RemoveListener<OnCreateMatchRoomCompleteEvent>(OnCreateMatchRoomComplete);
+            EventChannel.RemoveListener<OnCreateMatchRoomFailedEvent>(OnCreateMatchRoomFailed);
+
+            roomPage.Show();
         }
 
         private void OnCreateMatchRoomFailed(OnCreateMatchRoomFailedEvent args)

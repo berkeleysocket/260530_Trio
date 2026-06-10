@@ -1,49 +1,76 @@
 using Runtime.Shared.Core;
+using Runtime.Utility.EventChannel;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using BackEnd.Tcp;
 
 namespace Runtime.UI
 {
-    [RequireComponent(typeof(CanvasGroup))]
     public class RoomPage : Page
     {
-        [SerializeField] private MatchMakingUserElementUI userElementPrefab;
+        [SerializeField] private VisitorElementUI userElementPrefab;
         [SerializeField] private VerticalLayoutGroup verticalLayoutGroup;
-        [SerializeField] private Button btn_invite;
+
+        [SerializeField] private ErrorMessageUI errorMessage;
         [SerializeField] private TMP_InputField inputName;
+        [SerializeField] private Button btn_invite;
 
-        private List<MatchMakingUserElementUI> _visitors;
+        private List<VisitorElementUI> _visitors;
 
-        private void Awake()
+        public override void Initialize()
         {
-            Initialize();
-        }
+            base.Initialize();
 
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-            
-            _visitors = new List<MatchMakingUserElementUI>();
+            _visitors = new List<VisitorElementUI>();
+
+            EventChannel.AddListener<OnMatchMakingRoomInviteCompleteEvent>(OnMatchMakingRoomInviteComplete);
+            EventChannel.AddListener<OnMatchMakingRoomInviteFailedEvent>(OnMatchMakingRoomInviteFailed);
+            EventChannel.AddListener<OnMatchMakingRoomJoinedEvent>(OnMatchMakingRoomJoined);
+            EventChannel.AddListener<OnMatchMakingRoomLeftEvent>(OnMatchMakingRoomLeft);
 
             btn_invite.onClick.AddListener(OnClickedInviteButton);
+
+            errorMessage.Initialize();
         }
 
         private void OnClickedInviteButton()
         {
             string userName = inputName.text.Trim();
 
-            NetworkManager.Instance.Lobby.MatchMakingRoomJoined += HandleMatchMakingRoomJoined;
             NetworkManager.Instance.Lobby.InviteUser(userName);  
         }
 
-        private void HandleMatchMakingRoomJoined(MatchMakingUserInfo user)
+        private void OnMatchMakingRoomJoined(OnMatchMakingRoomJoinedEvent args)
         {
-            var visitor = Instantiate(userElementPrefab, verticalLayoutGroup.transform);
-
+            VisitorElementUI visitor = Instantiate(userElementPrefab, verticalLayoutGroup.transform);
+            visitor.Initialize(args.VisitorNickname);
             _visitors.Add(visitor);
+        }
+
+        private void OnMatchMakingRoomLeft(OnMatchMakingRoomLeftEvent args)
+        {
+            string leaverNickname = args.UserInfo.m_nickName;
+            int index = _visitors.FindIndex((visitor) => visitor.VisitorNickname == leaverNickname);
+            var leaver = _visitors[index];
+            Destroy(leaver);
+            _visitors.RemoveAt(index);
+        }
+
+        private void OnMatchMakingRoomInviteComplete(OnMatchMakingRoomInviteCompleteEvent args)
+        {
+            string message = "초대 전송에 성공했습니다.";
+            Color color = Color.green;
+            inputName.text = string.Empty;
+            errorMessage.SetMessage(message, color, false);
+        }
+
+        private void OnMatchMakingRoomInviteFailed(OnMatchMakingRoomInviteFailedEvent args)
+        {      
+            string message = $"초대 전송에 실패했습니다. ERROR : {args.ErrorCode}";
+            Color color = Color.red;
+            inputName.text = string.Empty;
+            errorMessage.SetMessage(message, color, true);
         }
     }
 }

@@ -9,18 +9,9 @@ namespace Runtime.Networks
 {
     public class LobbyService
     {
-        public event Action<string> MatchMakingRoomSomeoneInvited;
-        public event Action<MatchMakingUserInfo> MatchMakingRoomJoined;
-        public event Action<MatchMakingUserInfo> MatchMakingRoomLeave;
-
         private Action OnLeaveMatchMakingServerComplete;
         private Action<ErrorInfo> LeaveMatchMakingServerFailed;
 
-        private Action OnInviteUserComplete;
-        private Action<ErrorCode> InviteUserFailed;
-
-        private Action OnRespondToRoomInvitationComplete;
-        private Action<ErrorCode> RespondToRoomInvitationFailed;
         private Dictionary<string, (SessionId, string)> invitationDict;
 
         public void Initialize()
@@ -31,6 +22,7 @@ namespace Runtime.Networks
             Backend.Match.OnMatchMakingRoomInviteResponse = HandleRespondedToRoomInvitation;
             Backend.Match.OnMatchMakingRoomJoin = HandleMatchMakingRoomJoined;
             Backend.Match.OnMatchMakingRoomLeave = HandleMatchMakingRoomLeave;
+            Backend.Match.OnMatchMakingRoomInvite = HandleInvitedUser;
         }
 
         public void JoinMatchMakingServer()
@@ -100,31 +92,23 @@ namespace Runtime.Networks
             }
         }
 
-        public void InviteUser(string nickname, Action onCompleted = null,
-            Action<ErrorCode> onFailed = null)
+        public void InviteUser(string nickname)
         {
-            if (onCompleted != null)
-                OnInviteUserComplete = onCompleted;
-            if (onFailed != null)
-                InviteUserFailed = onFailed;
-
-            Backend.Match.OnMatchMakingRoomInvite = HandleInvitedUser;
             Backend.Match.InviteUser(nickname);
         }
 
         private void HandleInvitedUser(MatchMakingInteractionEventArgs args)
         {
-            if (args.ErrInfo == ErrorCode.Success)
+            ErrorCode errorCode = args.ErrInfo;
+            if (errorCode == ErrorCode.Success)
             {
                 CustomLog.LogSuccess("유저 초대에 성공했습니다.");
-                OnInviteUserComplete?.Invoke();
-                OnInviteUserComplete = null;
+                EventChannel.InvokeEvent(new OnMatchMakingRoomInviteCompleteEvent());
             }
             else
             {
                 CustomLog.LogError("유저 초대에 실패했습니다.");
-                InviteUserFailed?.Invoke(args.ErrInfo);
-                InviteUserFailed = null;
+                EventChannel.InvokeEvent(new OnMatchMakingRoomInviteFailedEvent(errorCode));
             }
         }
 
@@ -132,14 +116,15 @@ namespace Runtime.Networks
         {
             if (args.ErrInfo == ErrorCode.Success)
             {
-                string inviter = args.InviteUserInfo.m_nickName;
+                string inviterNickname = args.InviteUserInfo.m_nickName;
                 SessionId roomId = args.RoomId;
                 string roomToken = args.RoomToken;
-                invitationDict[inviter] = (roomId, roomToken);
+                invitationDict[inviterNickname] = (roomId, roomToken);
 
                 CustomLog.LogSuccess("초대 수신에 성공했습니다.");
-                CustomLog.LogSuccess($"Inviter : {inviter}, Room Id : {roomId}, Room Token : {roomToken}");
-                MatchMakingRoomSomeoneInvited?.Invoke(inviter);
+                CustomLog.LogSuccess($"Inviter : {inviterNickname}, Room Id : {roomId}, Room Token : {roomToken}");
+                
+                EventChannel.InvokeEvent(new OnMatchMakingRoomSomeoneInvitedEvent(inviterNickname));
             }
         }
 
@@ -147,42 +132,40 @@ namespace Runtime.Networks
         {
             if (args.ErrInfo == ErrorCode.Success)
             {
-                MatchMakingUserInfo user = args.UserInfo;
-                CustomLog.LogSuccess($"{user.m_nickName} 유저가 입장에 성공했습니다.");
-                MatchMakingRoomJoined?.Invoke(user);
+                string visitorNickname = args.UserInfo.m_nickName;
+                CustomLog.LogSuccess($"{visitorNickname} 유저가 입장에 성공했습니다.");
+                EventChannel.InvokeEvent(new OnMatchMakingRoomJoinedEvent(visitorNickname));
             }
         }
 
-        public void RespondToRoomInvitation(string inviterNickname, bool isAccept,
-            Action onCompleted = null, Action<ErrorCode> onFailed = null)
+        public void RespondToRoomInvitation(string inviterNickname, bool isAccept)
         {
-            var roomId = invitationDict[inviterNickname].Item1;
-            var roomToken = invitationDict[inviterNickname].Item2;
+            if(invitationDict.TryGetValue(inviterNickname, out (SessionId, string) invitation))
+            {
+                var roomId = invitation.Item1;
+                var roomToken = invitation.Item2;
 
-            if (OnRespondToRoomInvitationComplete != null)
-                this.OnRespondToRoomInvitationComplete = onCompleted;
-            if (RespondToRoomInvitationFailed != null)
-                this.RespondToRoomInvitationFailed = onFailed;
-            
-            if(isAccept)
-                Backend.Match.AcceptInvitation(roomId, roomToken);
+                if (isAccept)
+                    Backend.Match.AcceptInvitation(roomId, roomToken);
+                else
+                    Backend.Match.DeclineInvitation(roomId, roomToken);
+            }
             else
-                Backend.Match.DeclineInvitation(roomId, roomToken);
+                EventChannel.InvokeEvent(new OnRespondToRoomInvitationFailed(ErrorCode.AuthenticationFailed));
         }
 
         private void HandleRespondedToRoomInvitation(MatchMakingInteractionEventArgs args)
         {
-            if(args.ErrInfo == ErrorCode.Success)
+            ErrorCode errorCode = args.ErrInfo;
+            if (errorCode == ErrorCode.Success)
             {
                 CustomLog.LogSuccess("초대에 대한 수락/거절 응답을 성공했습니다");
-                OnRespondToRoomInvitationComplete?.Invoke();
-                OnRespondToRoomInvitationComplete = null;
+                EventChannel.InvokeEvent(new OnRespondToRoomInvitationComplete());
             }
             else
             {
                 CustomLog.LogSuccess("초대에 대한 수락/거절 응답을 실패했습니다");
-                RespondToRoomInvitationFailed?.Invoke(args.ErrInfo);
-                RespondToRoomInvitationFailed = null;
+                EventChannel.InvokeEvent(new OnRespondToRoomInvitationFailed(errorCode));
             }
         }
 
@@ -192,8 +175,7 @@ namespace Runtime.Networks
             {
                 MatchMakingUserInfo user = args.UserInfo;
                 CustomLog.LogSuccess($"{user.m_nickName}(이)가 퇴장에 성공했습니다.");
-                MatchMakingRoomLeave?.Invoke(user);
-                MatchMakingRoomLeave = null;
+                EventChannel.InvokeEvent(new OnMatchMakingRoomLeftEvent(user));
             }
         }
     }

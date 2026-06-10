@@ -1,38 +1,41 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using DG.Tweening;
 
 namespace Runtime.UI
 {
-    public class UITextAlphaBlinkEffect : MonoBehaviour, IUIEffect
+    public class UIEffect_TextBlink : MonoBehaviour, IUIEffect
     {
+        [SerializeField] private TMP_Text textCompo;
         [SerializeField] private float blinkInterval = 1f;         
         [Range(0f, 1f)]
-        [SerializeField] private float minAlpha = 0.5f;         
+        [SerializeField] private float minAlpha = 0.5f;
 
-        private TMP_Text _textComponent;
+        private Coroutine _effectRoutine;
 
-        #region 임시 코드
-        private void Awake()
+        public void Initialize()
         {
-            _textComponent = GetComponent<TMP_Text>();
+
         }
 
-        private void Start()
-        {
-            ActiveEffect();
-        }
-        #endregion
-
-        [ContextMenu("Active Effect")]
         public void ActiveEffect()
         {
-            StartCoroutine(AnimateAlpha());
+            if(_effectRoutine == null)
+                _effectRoutine = StartCoroutine(Blink());
         }
 
-        private IEnumerator AnimateAlpha()
+        public void InactiveEffect()
         {
-            Color color = _textComponent.color;
+            if (_effectRoutine != null)
+                StopCoroutine(_effectRoutine);
+
+            textCompo.alpha = 1f;
+        }
+
+        private IEnumerator Blink()
+        {
+            Color color = textCompo.color;
             bool flip = false;
 
             while(true)
@@ -47,7 +50,7 @@ namespace Runtime.UI
                 else
                     color.a -= 0.1f;
                 
-                _textComponent.color = color;
+                textCompo.color = color;
 
                 yield return new WaitForSeconds(blinkInterval);
             }
