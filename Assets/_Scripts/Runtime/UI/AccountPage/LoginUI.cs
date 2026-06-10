@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace Runtime.UI
 {
-    public class LoginUI : MonoBehaviour
+    public class LoginUI : MonoBehaviour, IWindowElement
     {
         [SerializeField] private Button btn_confirm;
         [SerializeField] private Button btn_switchSignUpUI;
@@ -19,7 +19,7 @@ namespace Runtime.UI
 
         private CanvasGroup _elementGroup;
 
-        private void Awake()
+        public void Initialize()
         {
             _elementGroup = GetComponent<CanvasGroup>();
 

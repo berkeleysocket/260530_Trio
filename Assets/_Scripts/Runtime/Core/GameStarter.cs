@@ -4,6 +4,7 @@ using UnityEngine;
 using Runtime.UI;
 using Runtime.Utility.EventChannel;
 using Runtime.Pattern;
+using Utility.Debug;
 
 namespace Runtime.Core
 {
@@ -16,9 +17,12 @@ namespace Runtime.Core
 
         private void Awake()
         {
-            IInitializable[] initObjs = canvas.GetComponentsInChildren<IInitializable>();
+            IInitializable[] initObjs = canvas.GetComponentsInChildren<IInitializable>(true);
             foreach (IInitializable element in initObjs)
+            {
+                CustomLog.LogSuccess($"{element} Initialize");
                 element.Initialize();
+            }
             
             NetworkManager.Instance.Initialize();
             InputManager.Instance.Initialize();

@@ -723,7 +723,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cafd546309bbcd54caa6af8a6640b449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime.UI::Runtime.UI.ErrorMessageUI
+  effects:
+  - {fileID: 203510037}
   displayDuration: 5
+  fadeInSpeed: 1
+  fadeOutSpeed: 1
 --- !u!1 &212923986
 GameObject:
   m_ObjectHideFlags: 0
@@ -2306,8 +2310,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06edd372f3e87b54dbecdd66011abe50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime.UI::Runtime.UI.TitlePage
-  fadeInSpeed: 2.5
-  fadeOutSpeed: 2.5
+  fadeInSpeed: 1
+  fadeOutSpeed: 1
 --- !u!225 &532252905
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -3729,7 +3733,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 858678206}
-  - component: {fileID: 858678209}
   - component: {fileID: 858678210}
   - component: {fileID: 858678208}
   - component: {fileID: 858678207}
@@ -3859,18 +3862,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 858678205}
   m_CullTransparentMesh: 1
---- !u!114 &858678209
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 858678205}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f625fdccc3db48d4ca0fe9181b2694bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Runtime.UI::Runtime.UI.TextSquashAndStretch
 --- !u!114 &858678210
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5088,7 +5079,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cafd546309bbcd54caa6af8a6640b449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime.UI::Runtime.UI.ErrorMessageUI
+  effects:
+  - {fileID: 1146494195}
   displayDuration: 5
+  fadeInSpeed: 1
+  fadeOutSpeed: 1
 --- !u!1 &1186483235
 GameObject:
   m_ObjectHideFlags: 0
@@ -7326,7 +7321,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cafd546309bbcd54caa6af8a6640b449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime.UI::Runtime.UI.ErrorMessageUI
+  effects:
+  - {fileID: 1766783783}
   displayDuration: 5
+  fadeInSpeed: 1
+  fadeOutSpeed: 1
 --- !u!114 &1766783783
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7905,8 +7904,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Runtime.UI::Runtime.UI.AccountPage
   fadeInSpeed: 1
   fadeOutSpeed: 1
-  <signUI>k__BackingField: {fileID: 659319033}
-  <loginUI>k__BackingField: {fileID: 485966254}
 --- !u!225 &1896723845
 CanvasGroup:
   m_ObjectHideFlags: 0

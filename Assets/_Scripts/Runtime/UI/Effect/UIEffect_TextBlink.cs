@@ -1,41 +1,45 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
-using DG.Tweening;
+using Utility.Debug;
 
 namespace Runtime.UI
 {
-    public class UIEffect_TextBlink : MonoBehaviour, IUIEffect
+    public class UIEffect_TextBlink : UIEffect
     {
-        [SerializeField] private TMP_Text textCompo;
         [SerializeField] private float blinkInterval = 1f;         
         [Range(0f, 1f)]
         [SerializeField] private float minAlpha = 0.5f;
 
+        private TMP_Text _targetText;
         private Coroutine _effectRoutine;
 
-        public void Initialize()
+        public override void Initialize()
         {
+            base.Initialize();
 
+            _targetText = GetComponent<TMP_Text>();
+
+            CustomLog.Assert(_targetText != null, "_targetText is null");
         }
 
-        public void ActiveEffect()
+        public override void ActiveEffect()
         {
             if(_effectRoutine == null)
                 _effectRoutine = StartCoroutine(Blink());
         }
 
-        public void InactiveEffect()
+        public override void InactiveEffect()
         {
             if (_effectRoutine != null)
                 StopCoroutine(_effectRoutine);
 
-            textCompo.alpha = 1f;
+            _targetText.alpha = 1f;
         }
 
         private IEnumerator Blink()
         {
-            Color color = textCompo.color;
+            Color color = _targetText.color;
             bool flip = false;
 
             while(true)
@@ -50,7 +54,7 @@ namespace Runtime.UI
                 else
                     color.a -= 0.1f;
                 
-                textCompo.color = color;
+                _targetText.color = color;
 
                 yield return new WaitForSeconds(blinkInterval);
             }
