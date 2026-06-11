@@ -2,22 +2,18 @@ using UnityEngine;
 
 namespace Runtime.UI
 {
-    public class ErrorMessageUI : TextUI
+    public class ErrorMessageUI : WindowText
     {
-        [SerializeField] private float displayDuration = 5f;
-        [SerializeField] private float fadeInSpeed = 1f;
-        [SerializeField] private float fadeOutSpeed = 1f;
-
-        public sealed override void Initialize() 
+        protected override void OnInitialize()
         {
-            base.Initialize();
+            base.OnInitialize();
         }
 
         protected sealed override void OnSetMessage(bool useEffect)
         {
             base.OnSetMessage();
 
-            Fade(displayDuration, fadeInSpeed, fadeOutSpeed);
+            ShowAndHide();
         }
     }
 }

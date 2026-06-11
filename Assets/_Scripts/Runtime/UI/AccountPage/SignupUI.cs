@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace Runtime.UI
 {
-    public class SignUpUI : MonoBehaviour
+    public class SignUpUI : WindowElementDirector
     {
         [SerializeField] private Button btn_confirm;
         [SerializeField] private Button btn_switchLoginUI;
@@ -22,8 +22,10 @@ namespace Runtime.UI
         private CanvasGroup _elementGroup;
         private string inputName;
 
-        private void Awake()
+        protected override void OnInitialize()
         {
+            base.OnInitialize();
+
             _elementGroup = GetComponent<CanvasGroup>();
 
             errorMessage.Initialize();

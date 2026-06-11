@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace Runtime.UI
 {
-    public class LoginUI : MonoBehaviour, IWindowElement
+    public class LoginUI : WindowElementDirector
     {
         [SerializeField] private Button btn_confirm;
         [SerializeField] private Button btn_switchSignUpUI;
@@ -19,8 +19,10 @@ namespace Runtime.UI
 
         private CanvasGroup _elementGroup;
 
-        public void Initialize()
+        protected override void OnInitialize()
         {
+            base.OnInitialize();
+
             _elementGroup = GetComponent<CanvasGroup>();
 
             EventChannel.AddListener<OnCustomLoginCompleteEvent>(OnLoginComplete);

@@ -13,6 +13,12 @@ namespace Runtime.UI
         private RectTransform _targetRectTransform;
         private Vector2 _initAnchorPos;
 
+        private void Awake()
+        {
+            Debug.LogWarning("임시 초기화");
+            Initialize();
+        }
+
         public override void Initialize()
         {
             base.Initialize();

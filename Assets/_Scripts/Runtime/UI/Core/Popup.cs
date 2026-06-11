@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Runtime.UI
 {
-    public abstract class Popup : MonoBehaviour, IWindow
+    public abstract class Popup : Window
     {
         [SerializeField] private Vector2 shownPos;
         [SerializeField] private Vector2 hiddenPos;
@@ -16,8 +16,10 @@ namespace Runtime.UI
         private Coroutine _hideTimer;
         private float _duration = 1f;
 
-        public virtual void Initialize()
+        public override void OnInitialize()
         {
+            base.OnInitialize();
+
             _popupGroup = GetComponent<CanvasGroup>();
 
             _showSequence = DOTween.Sequence()
@@ -43,6 +45,7 @@ namespace Runtime.UI
 
         public void Show()
         {
+            gameObject.SetActive(true);
             _hideSequence.Pause();
             _showSequence.Restart();
         }

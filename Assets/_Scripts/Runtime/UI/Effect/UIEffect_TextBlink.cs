@@ -14,6 +14,12 @@ namespace Runtime.UI
         private TMP_Text _targetText;
         private Coroutine _effectRoutine;
 
+        private void Awake()
+        {
+            CustomLog.LogWarning("임시 초기화");
+            Initialize();
+        }
+
         public override void Initialize()
         {
             base.Initialize();

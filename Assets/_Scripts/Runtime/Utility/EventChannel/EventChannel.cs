@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
+using Utility.Debug;
 
 namespace Runtime.Utility.EventChannel
 {
@@ -14,7 +14,7 @@ namespace Runtime.Utility.EventChannel
             //이미 구독중인 메서드가 다시 구독되지 않도록 한다.
             if (_lookUpTable.ContainsKey(handler) == true)
             {
-                Debug.Log($"{typeof(T)} is already registered");
+                CustomLog.LogError($"{typeof(T)} is already registered");
                 return;
             }
 

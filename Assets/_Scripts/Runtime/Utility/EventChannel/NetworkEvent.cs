@@ -1,4 +1,5 @@
 using BackEnd.Tcp;
+using System.Collections.Generic;
 
 namespace Runtime.Utility.EventChannel
 {
@@ -134,11 +135,11 @@ namespace Runtime.Utility.EventChannel
     #endregion
 
     #region OnRespondToRoomInvitation
-    public class OnRespondToRoomInvitationComplete : GameEvent { }
-    public class OnRespondToRoomInvitationFailed : GameEvent 
+    public class OnRespondToRoomInvitationCompleteEvent : GameEvent { }
+    public class OnRespondToRoomInvitationFailedEvent : GameEvent 
     { 
         public ErrorCode ErrorCode { get; private set; } 
-        public OnRespondToRoomInvitationFailed(ErrorCode errorCode)
+        public OnRespondToRoomInvitationFailedEvent(ErrorCode errorCode)
         {
             this.ErrorCode = errorCode;
         }
@@ -147,5 +148,39 @@ namespace Runtime.Utility.EventChannel
 
     #region OnRemovedMail
     public class OnRemovedMailEvent : GameEvent { }
+    #endregion
+
+    #region OnLeftMatchRoom
+    public class OnLeftMatchRoomCompleteEvent : GameEvent { }
+    public class OnLeftMatchRoomFailedEvent : GameEvent 
+    { 
+        public ErrorCode ErrorCode { get; private set; }
+
+        public OnLeftMatchRoomFailedEvent(ErrorCode errorCode)
+        {
+            this.ErrorCode = ErrorCode;
+        }
+    }
+    #endregion
+
+    #region OnHandleMatchMakingRoomUserList
+    public class OnHandleMatchMakingRoomUserListCompleteEvent : GameEvent
+    {
+        public List<MatchMakingUserInfo> UserList { get; private set; }
+
+        public OnHandleMatchMakingRoomUserListCompleteEvent(List<MatchMakingUserInfo> userList)
+        {
+            this.UserList = userList;
+        }
+    }
+
+    public class OnHandleMatchMakingRoomUserListFailedEvent : GameEvent 
+    { 
+
+        public OnHandleMatchMakingRoomUserListFailedEvent()
+        {
+
+        }
+    }
     #endregion
 }

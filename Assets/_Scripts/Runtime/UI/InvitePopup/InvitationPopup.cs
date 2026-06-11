@@ -14,19 +14,35 @@ namespace Runtime.UI
 
         private string _inviterNickname = null;
 
-        public override void Initialize()
+        public override void OnInitialize()
         {
-            base.Initialize();
+            base.OnInitialize();
 
-            EventChannel.AddListener<OnMatchMakingRoomSomeoneInvitedEvent>(HandleMatchMakingRoomSomeoneInvited);
-            btn_accept.onClick.AddListener(() => NetworkManager.Instance.Lobby.RespondToRoomInvitation(_inviterNickname, true));
-            btn_decline.onClick.AddListener(() => NetworkManager.Instance.Lobby.RespondToRoomInvitation(_inviterNickname, false));
+            EventChannel.AddListener<OnMatchMakingRoomSomeoneInvitedEvent>(OnMatchMakingRoomSomeoneInvited);
+            EventChannel.AddListener<OnRespondToRoomInvitationCompleteEvent>(OnRespondToRoomInvitationComplete);
+            btn_accept.onClick.AddListener(OnClickedAcceptButton);
+            btn_decline.onClick.AddListener(OnClickedDeclineButton);
         }
 
-        public void HandleMatchMakingRoomSomeoneInvited(OnMatchMakingRoomSomeoneInvitedEvent args)
+        private void OnMatchMakingRoomSomeoneInvited(OnMatchMakingRoomSomeoneInvitedEvent args)
         {
             this._inviterNickname = args.InviterNickname;
             this.txt_inviteMessage.text = $"{args.InviterNickname}(이)가 당신에게 초대를 보냈습니다!";
+        }
+
+        private void OnRespondToRoomInvitationComplete(OnRespondToRoomInvitationCompleteEvent args)
+        {
+            Hide();
+        }
+
+        private void OnClickedAcceptButton()
+        {
+            NetworkManager.Instance.Lobby.RespondToRoomInvitation(_inviterNickname, true);
+        }
+
+        private void OnClickedDeclineButton()
+        {
+            NetworkManager.Instance.Lobby.RespondToRoomInvitation(_inviterNickname, false);
         }
     }
 }

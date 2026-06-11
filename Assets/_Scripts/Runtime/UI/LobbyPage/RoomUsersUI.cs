@@ -1,3 +1,5 @@
+using BackEnd.Tcp;
+using Codice.Client.Common;
 using Runtime.Shared.Core;
 using Runtime.Utility.EventChannel;
 using System.Collections.Generic;
@@ -6,18 +8,21 @@ using UnityEngine.UI;
 
 namespace Runtime.UI
 {
-    public class RoomUsersUI : MonoBehaviour, IWindowElement
+    public class RoomUsersUI : WindowElementDirector
     {
         [SerializeField] private RoomUserElementUI userElementPrefab;
         [SerializeField] private VerticalLayoutGroup verticalLayoutGroup;
 
         private List<RoomUserElementUI> _roomUserList;
 
-        public void Initialize()
+        protected override void OnInitialize()
         {
+            base.OnInitialize();
+
             _roomUserList = new List<RoomUserElementUI>();
 
             EventChannel.AddListener<OnCreateMatchRoomCompleteEvent>(OnCreateMatchRoomComplete);
+            EventChannel.AddListener<OnHandleMatchMakingRoomUserListCompleteEvent>(OnHandleMatchMakingRoomUserListComplete);
             EventChannel.AddListener<OnMatchMakingRoomJoinedEvent>(OnMatchMakingRoomJoined);
             EventChannel.AddListener<OnMatchMakingRoomLeftEvent>(OnMatchMakingRoomLeft);
         }
@@ -43,6 +48,20 @@ namespace Runtime.UI
             var leaver = _roomUserList[index];
             Destroy(leaver);
             _roomUserList.RemoveAt(index);
+        }
+
+        private void OnHandleMatchMakingRoomUserListComplete(OnHandleMatchMakingRoomUserListCompleteEvent args)
+        {
+            List<MatchMakingUserInfo> userList = args.UserList;
+
+            foreach(var userInfo in userList)
+            {
+                string userNickname = userInfo.m_nickName;
+                if (userNickname == NetworkManager.Instance.MyAccount.Nickname) continue;
+                RoomUserElementUI visitor = Instantiate(userElementPrefab, verticalLayoutGroup.transform);
+                visitor.Initialize(userNickname);
+                _roomUserList.Add(visitor);
+            }
         }
     }
 }

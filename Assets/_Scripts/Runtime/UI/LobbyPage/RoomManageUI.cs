@@ -3,19 +3,20 @@ using Runtime.Utility.EventChannel;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Utility.Debug;
 
 namespace Runtime.UI
 {
-    public class RoomManageUI : MonoBehaviour, IWindowElement
+    public class RoomManageUI : WindowElementDirector
     {
         [SerializeField] private ErrorMessageUI errorMessage;
         [SerializeField] private Button btn_exit;
         [SerializeField] private Button btn_invite;
         [SerializeField] private TMP_InputField inputName;
 
-        public void Initialize()
+        protected override void OnInitialize()
         {
+            base.OnInitialize();
+
             errorMessage.Initialize();
 
             btn_invite.onClick.AddListener(OnClickedInviteButton);
@@ -33,7 +34,7 @@ namespace Runtime.UI
 
         private void OnClickedExitButton()
         {
-            CustomLog.LogError("방에서 나가는 처리 구현하기");
+            NetworkManager.Instance.Lobby.LeaveMatchRoom();
         }
 
         private void OnMatchMakingRoomInviteComplete(OnMatchMakingRoomInviteCompleteEvent args)

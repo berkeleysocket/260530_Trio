@@ -2,6 +2,7 @@ using BackEnd;
 using BackEnd.Tcp;
 using Runtime.Utility.EventChannel;
 using System;
+using System.Collections.Generic;
 using Utility.Debug;
 
 namespace Runtime.Networks
@@ -15,6 +16,8 @@ namespace Runtime.Networks
         public void Initialize()
         {
             _mailBox = new Mailbox();
+            _mailBox.Initialize();
+
             Backend.Match.OnMatchMakingRoomCreate = HandleCreateMatchRoom;
             Backend.Match.OnJoinMatchMakingServer = HandleJoinedMatchMakingServer;
             Backend.Match.OnMatchMakingRoomSomeoneInvited = HandleMatchMakingRoomSomeoneInvited;
@@ -22,6 +25,8 @@ namespace Runtime.Networks
             Backend.Match.OnMatchMakingRoomJoin = HandleMatchMakingRoomJoined;
             Backend.Match.OnMatchMakingRoomLeave = HandleMatchMakingRoomLeave;
             Backend.Match.OnMatchMakingRoomInvite = HandleInvitedUser;
+            Backend.Match.OnMatchMakingRoomLeave = HandleLeftMatchRoom;
+            Backend.Match.OnMatchMakingRoomUserList = HandleMatchMakingRoomUserList;
         }
 
         #region JoinMatchMakingServer
@@ -77,6 +82,7 @@ namespace Runtime.Networks
         #region CreateMatchRoom
         public void CreateMatchRoom()
         {
+            CustomLog.Log("CreateMatchRoom");
             Backend.Match.CreateMatchRoom();
         }
 
@@ -91,6 +97,29 @@ namespace Runtime.Networks
             {
                 CustomLog.LogError("매칭 룸 생성에 실패했습니다.");
                 EventChannel.InvokeEvent(new OnCreateMatchRoomFailedEvent(args.ErrInfo));
+            }
+        }
+        #endregion
+
+        #region LeaveMatchRoom
+        public void LeaveMatchRoom()
+        {
+            Backend.Match.LeaveMatchRoom();
+        }
+
+        private void HandleLeftMatchRoom(MatchMakingGamerInfoInRoomEventArgs args)
+        {
+            ErrorCode errorCode = args.ErrInfo;
+
+            if (errorCode == ErrorCode.Success)
+            {
+                CustomLog.LogSuccess("방에서 나가는데 성공했습니다.");
+                EventChannel.InvokeEvent(new OnLeftMatchRoomCompleteEvent());
+            }
+            else
+            {
+                CustomLog.LogError("방에서 나가는데 실패했습니다.");
+                EventChannel.InvokeEvent(new OnLeftMatchRoomFailedEvent(errorCode));
             }
         }
         #endregion
@@ -131,7 +160,10 @@ namespace Runtime.Networks
                     Backend.Match.DeclineInvitation(roomId, roomToken);
             }
             else
-                EventChannel.InvokeEvent(new OnRespondToRoomInvitationFailed(ErrorCode.AuthenticationFailed));
+            {
+                CustomLog.LogSuccess("초대에 대한 수락/거절 응답을 실패했습니다");
+                EventChannel.InvokeEvent(new OnRespondToRoomInvitationFailedEvent(ErrorCode.AuthenticationFailed));
+            }
         }
 
         private void HandleRespondedToRoomInvitation(MatchMakingInteractionEventArgs args)
@@ -140,15 +172,27 @@ namespace Runtime.Networks
             if (errorCode == ErrorCode.Success)
             {
                 CustomLog.LogSuccess("초대에 대한 수락/거절 응답을 성공했습니다");
-                EventChannel.InvokeEvent(new OnRespondToRoomInvitationComplete());
+                EventChannel.InvokeEvent(new OnRespondToRoomInvitationCompleteEvent());
             }
             else
             {
                 CustomLog.LogSuccess("초대에 대한 수락/거절 응답을 실패했습니다");
-                EventChannel.InvokeEvent(new OnRespondToRoomInvitationFailed(errorCode));
+                EventChannel.InvokeEvent(new OnRespondToRoomInvitationFailedEvent(errorCode));
             }
         }
         #endregion
+
+        private void HandleMatchMakingRoomUserList(MatchMakingGamerInfoListInRoomEventArgs args)
+        {
+            if(args.ErrInfo == ErrorCode.Success)
+            {
+                EventChannel.InvokeEvent(new OnHandleMatchMakingRoomUserListCompleteEvent(args.UserInfos));
+            }
+            else
+            {
+                EventChannel.InvokeEvent(new OnHandleMatchMakingRoomUserListFailedEvent());
+            }
+        }
 
         private void HandleMatchMakingRoomSomeoneInvited(MatchMakingInvitedRoomEventArgs args)
         {
@@ -165,9 +209,7 @@ namespace Runtime.Networks
                 EventChannel.InvokeEvent(new OnMatchMakingRoomSomeoneInvitedEvent(inviterNickname));
             }
             else
-            {
                 CustomLog.LogError($"초대 수신에 실패했습니다. ERROR : {args.ErrInfo}");
-            }
         }
 
         private void HandleMatchMakingRoomJoined(MatchMakingGamerInfoInRoomEventArgs args)
